@@ -1,0 +1,22 @@
+openapi: 3.0.0
+info:
+  title: FRANK AI CORTEX Gestures API
+  version: 2026.1.0
+paths:
+  /swarm/gesture:
+    post:
+      summary: Process IMU gestures from T-Watch S3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                imu_data:
+                  type: object
+                user_id:
+                  type: string
+      responses:
+        '200':
+          description: Gesture processed successfully

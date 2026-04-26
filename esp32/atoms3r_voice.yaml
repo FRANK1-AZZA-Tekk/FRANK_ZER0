@@ -1,0 +1,37 @@
+esphome:
+  name: atoms3r-voice
+  platform: ESP32
+  board: esp32-s3-devkitc-1
+
+wifi:
+  ssid: "YOUR_SSID"
+  password: "YOUR_PASSWORD"
+
+mqtt:
+  broker: "192.168.1.100"
+  topic_prefix: frank/atoms3r
+
+i2s_audio:
+  - id: i2s_in
+    i2s_lrclk_pin: GPIO5
+    i2s_bclk_pin: GPIO6
+
+microphone:
+  - platform: i2s_audio
+    id: mic
+    i2s_audio_id: i2s_in
+    adc_type: external
+    pdm: false
+
+speaker:
+  - platform: i2s_audio
+    id: spk
+    i2s_audio_id: i2s_in
+    dac_type: external
+
+voice_assistant:
+  microphone: mic
+  speaker: spk
+  noise_suppression_level: 2
+  auto_gain: 31dB
+  volume_multiplier: 2.0

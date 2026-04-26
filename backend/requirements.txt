@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+crewai
+langchain-google-genai
+langchain-groq
+neo4j
+pydantic
+python-dotenv
+sse-starlette
+torch
+transformers
+langchain-huggingface

@@ -1,0 +1,21 @@
+{
+  "name": "FRANK CORTEX 2026",
+  "short_name": "FRANK",
+  "description": "Cyberpunk Wearable AI OS with Voice Control and Real-time Agent Monitoring",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#00ff88",
+  "icons": [
+    {
+      "src": "https://picsum.photos/seed/frank/192/192",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://picsum.photos/seed/frank/512/512",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

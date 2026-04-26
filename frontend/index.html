@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FRANK CORTEX 2026</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body class="bg-[#050505] text-[#00ff88] font-['JetBrains+Mono'] overflow-hidden">
+    <div id="app" class="h-screen w-screen flex flex-col items-center justify-center relative">
+        
+        <!-- Neon Glass Orb -->
+        <div id="orb-container" class="relative flex justify-center items-center mb-12">
+            <div id="main-orb" class="w-48 h-48 rounded-full bg-[#00ff88]/10 border-2 border-[#00ff88] shadow-[0_0_100px_#00ff88,inset_0_0_40px_rgba(0,255,136,0.4)] animate-[pulse_2s_infinite]"></div>
+            <div id="inner-core" class="absolute w-20 h-20 rounded-full bg-[#00ff88]/50 blur-xl"></div>
+            <div id="listening-ring" class="absolute w-56 h-56 rounded-full border border-[#00ff88]/30 hidden animate-ping"></div>
+        </div>
+
+        <!-- System Status -->
+        <div id="status-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 px-4 w-full max-w-4xl">
+            <div class="status-card p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl text-center">
+                <span class="text-[10px] uppercase tracking-widest opacity-50">LLM Router</span>
+                <div class="text-sm font-bold mt-1">GEMINI 1.5</div>
+            </div>
+            <div class="status-card p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl text-center">
+                <span class="text-[10px] uppercase tracking-widest opacity-50">Memory</span>
+                <div class="text-sm font-bold mt-1">CHROMA_DB</div>
+            </div>
+            <div class="status-card p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl text-center">
+                <span class="text-[10px] uppercase tracking-widest opacity-50">Hardware</span>
+                <div class="text-sm font-bold mt-1">XIAOMI 12</div>
+            </div>
+            <div class="status-card p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl text-center">
+                <span class="text-[10px] uppercase tracking-widest opacity-50">Network</span>
+                <div class="text-sm font-bold mt-1">BLE_MESH</div>
+            </div>
+        </div>
+
+        <!-- Terminal Output -->
+        <div id="terminal" class="w-full max-w-4xl h-48 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl p-6 overflow-y-auto text-xs leading-relaxed shadow-inner mx-4">
+            <div class="flex items-center gap-2 mb-4 opacity-50 border-b border-white/10 pb-2">
+                <span class="w-2 h-2 rounded-full bg-[#00ff88] animate-pulse"></span>
+                SYSTEM TERMINAL v2.0.0
+            </div>
+            <div id="logs"></div>
+        </div>
+
+        <!-- Controls -->
+        <div class="fixed bottom-8 flex gap-6">
+            <button id="mic-btn" class="p-6 bg-black/40 backdrop-blur-md border border-[#00ff88]/50 rounded-full hover:bg-[#00ff88] hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(0,255,136,0.2)]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+            </button>
+            <button id="vision-btn" class="p-6 bg-black/40 backdrop-blur-md border border-[#00ff88]/50 rounded-full hover:bg-[#00ff88] hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(0,255,136,0.2)]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </button>
+            <button id="ble-btn" class="p-6 bg-black/40 backdrop-blur-md border border-[#00ff88]/50 rounded-full hover:bg-[#00ff88] hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(0,255,136,0.2)]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8 12 2l10 6-10 6L2 8Z"/><path d="m2 16 10 6 10-6"/><path d="m2 12 10 6 10-6"/></svg>
+            </button>
+            <input type="file" id="vision-input" class="hidden" accept="image/jpeg,image/png,image/webp">
+        </div>
+
+        <!-- Memory Graph Overlay (D3) -->
+        <svg id="memory-graph" class="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20"></svg>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

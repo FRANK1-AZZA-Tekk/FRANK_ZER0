@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:3000"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+    ports:
+      - "3000:3000"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - frank-net
+
+  backend:
+    build: ./backend
+    environment:
+      - APP_ENV=production
+      - GUNICORN_WORKERS=8
+      - REDIS_URL=redis://redis-sentinel:26379/0
+      - DATABASE_URL=postgresql://user:pass@postgres:5432/frank_db
+    volumes:
+      - frank-cache:/tmp/frank_cache
+    depends_on:
+      - redis-sentinel
+      - postgres
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`frank.cortex.local`)"
+      - "traefik.http.routers.backend.entrypoints=web"
+    networks:
+      - frank-net
+    restart: always
+
+  redis-sentinel:
+    image: bitnami/redis-sentinel:7.2
+    environment:
+      - REDIS_MASTER_HOST=redis-master
+    depends_on:
+      - redis-master
+    networks:
+      - frank-net
+
+  redis-master:
+    image: bitnami/redis:7.2
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - frank-net
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=frank_db
+    networks:
+      - frank-net
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - frank-net
+
+  langfuse:
+    image: langfuse/langfuse:latest
+    environment:
+      - DATABASE_URL=postgresql://user:pass@postgres:5432/frank_db
+    networks:
+      - frank-net
+
+networks:
+  frank-net:
+    driver: bridge
+
+volumes:
+  frank-cache:
+    driver: local

@@ -1,0 +1,71 @@
+substitutions:
+  name: "atoms3r-frank"
+  friendly_name: "Frank AtomS3R"
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  name_add_mac_suffix: true
+  project:
+    name: m5stack.atoms3r-echo
+    version: "2.0.cyberpunk"
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
+
+wifi:
+  ssid: "XIAOMI_12_HOTSPOT"
+  password: "YOUR_PASSWORD"
+  fast_connect: true
+
+mqtt:
+  broker: "192.168.43.1" # IP do Xiaomi 12 no Hotspot ou Servidor Local
+  port: 1883
+  topic_prefix: frank/atoms3r
+  client_id: "atoms3r_core"
+
+# Microfone PDM (Echo Base)
+i2s_audio:
+  - id: i2s_in
+    i2s_lrclk_pin: GPIO5
+    i2s_bclk_pin: GPIO6
+
+microphone:
+  - platform: i2s_audio
+    id: echo_mic
+    i2s_audio_id: i2s_in
+    adc_type: external
+    pdm: true
+
+# Botão principal para acionar voz (Push-to-Talk)
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO41
+      inverted: true
+    name: "AtomS3R PTT Button"
+    on_press:
+      - mqtt.publish:
+          topic: frank/atoms3r/voice_trigger
+          payload: "START_LISTENING"
+    on_release:
+      - mqtt.publish:
+          topic: frank/atoms3r/voice_trigger
+          payload: "STOP_LISTENING"
+
+# Feedback Visual (NeoPixel)
+light:
+  - platform: esp32_rmt_led_strip
+    rgb_order: GRB
+    pin: GPIO35
+    num_leds: 1
+    rmt_channel: 0
+    name: "AtomS3R Status LED"
+    id: status_led
+    effects:
+      - pulse:
+          name: "Listening Pulse"
+          transition_length: 500ms
+          update_interval: 500ms

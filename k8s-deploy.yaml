@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frank-cortex-backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frank-cortex
+  template:
+    metadata:
+      labels:
+        app: frank-cortex
+    spec:
+      containers:
+      - name: backend
+        image: frank-cortex-backend:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: APP_ENV
+          value: "production"
+        - name: GUNICORN_WORKERS
+          value: "8"
+        livenessProbe:
+          httpGet:
+            path: /api/v1/health/live
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/v1/health/ready
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: "1"
+            memory: "2Gi"
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frank-cortex-service
+spec:
+  selector:
+    app: frank-cortex
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer

@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+    --neon-green: #00ff88;
+    --neon-pink: #ff00ff;
+    --bg-dark: #050505;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--neon-green);
+    font-family: 'JetBrains Mono', monospace;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Glassmorphism */
+.backdrop-blur-md {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.backdrop-blur-xl {
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 60px var(--neon-green), inset 0 0 20px rgba(0,255,136,0.2); }
+    50% { transform: scale(1.05); box-shadow: 0 0 100px var(--neon-green), inset 0 0 40px rgba(0,255,136,0.4); }
+    100% { transform: scale(1); box-shadow: 0 0 60px var(--neon-green), inset 0 0 20px rgba(0,255,136,0.2); }
+}
+
+@keyframes listening-pulse {
+    0% { transform: scale(1); box-shadow: 0 0 80px var(--neon-pink), inset 0 0 30px rgba(255,0,255,0.3); border-color: var(--neon-pink); }
+    50% { transform: scale(1.1); box-shadow: 0 0 120px var(--neon-pink), inset 0 0 50px rgba(255,0,255,0.5); border-color: var(--neon-pink); }
+    100% { transform: scale(1); box-shadow: 0 0 80px var(--neon-pink), inset 0 0 30px rgba(255,0,255,0.3); border-color: var(--neon-pink); }
+}
+
+.listening #main-orb {
+    animation: listening-pulse 1s infinite !important;
+    background-color: rgba(255, 0, 255, 0.1) !important;
+}
+
+.listening #inner-core {
+    background-color: var(--neon-pink) !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--neon-green);
+    border-radius: 10px;
+}
+
+/* Status Cards Hover */
+.status-card {
+    transition: all 0.3s ease;
+}
+
+.status-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--neon-green);
+    transform: translateY(-2px);
+}
