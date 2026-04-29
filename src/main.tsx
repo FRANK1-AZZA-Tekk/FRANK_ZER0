@@ -6,15 +6,16 @@ import App from './App.tsx';
 import './index.css';
 import { registerSW } from 'virtual:pwa-register';
 
-const updateSW = registerSW({
-  onNeedRefresh() {
-    // Automatically update in iframe environment
-    updateSW(true);
-  },
-  onOfflineReady() {
-    console.log('App ready to work offline');
-  },
-});
+if (import.meta.env.PROD) {
+  const updateSW = registerSW({
+    onNeedRefresh() {
+      updateSW(true);
+    },
+    onOfflineReady() {
+      console.log('App ready to work offline');
+    },
+  });
+}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
