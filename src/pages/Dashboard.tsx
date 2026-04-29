@@ -50,7 +50,6 @@ import { AnalyticsDashboard } from '../components/Dashboard/AnalyticsDashboard';
 import { DailyImprovementsModal } from '../components/Dashboard/DailyImprovementsModal';
 import { FRANKScanModal } from '../components/Dashboard/FRANKScanModal';
 import { AgentIconSettingsModal } from '../components/Dashboard/AgentIconSettingsModal';
-import { Sidebar } from '../components/Sidebar';
 import { CommandHub } from '../components/CommandHub';
 import { WebGLCanvasBoundary } from '../components/WebGLCanvasBoundary';
 import { getIconComponent } from '../utils/icons';
@@ -228,10 +227,7 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col items-center p-4 lg:p-8 w-full relative min-h-screen overflow-x-hidden selection:bg-[#00ff88] selection:text-black">
       
-      {/* Sidebar Integration */}
-      <Sidebar onOpenCommandHub={() => setIsCommandHubOpen(true)} />
-
-      <main className="flex-1 flex flex-col items-center w-full transition-all duration-500 pl-0 sm:pl-20 lg:pl-72">
+      <main className="flex-1 flex flex-col items-center w-full transition-all duration-500">
         <div className="w-full max-w-[1600px] flex flex-col items-center">
           
           {/* Neural Background FX */}
