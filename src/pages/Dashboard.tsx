@@ -52,6 +52,7 @@ import { FRANKScanModal } from '../components/Dashboard/FRANKScanModal';
 import { AgentIconSettingsModal } from '../components/Dashboard/AgentIconSettingsModal';
 import { Sidebar } from '../components/Sidebar';
 import { CommandHub } from '../components/CommandHub';
+import { WebGLCanvasBoundary } from '../components/WebGLCanvasBoundary';
 import { getIconComponent } from '../utils/icons';
 
 import { useDashboardCommands } from '../hooks/useDashboardCommands';
@@ -248,14 +249,16 @@ export default function Dashboard() {
       <AnimatePresence>
         {/* 3D Visualization Background */}
         <div key="bg-3d" className="fixed inset-0 z-0 opacity-40 pointer-events-none">
-          <Canvas camera={{ position: [0, 0, 15], fov: 45 }}>
-            <PerspectiveCamera makeDefault position={[0, 0, 15]} />
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} />
-            <Suspense fallback={null}>
-              <NeuralNetwork3D />
-            </Suspense>
-          </Canvas>
+          <WebGLCanvasBoundary>
+            <Canvas camera={{ position: [0, 0, 15], fov: 45 }}>
+              <PerspectiveCamera makeDefault position={[0, 0, 15]} />
+              <ambientLight intensity={0.5} />
+              <pointLight position={[10, 10, 10]} />
+              <Suspense fallback={null}>
+                <NeuralNetwork3D />
+              </Suspense>
+            </Canvas>
+          </WebGLCanvasBoundary>
         </div>
 
         {/* Main Glassmorphism Container */}

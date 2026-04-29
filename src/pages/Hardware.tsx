@@ -8,6 +8,7 @@ import { updateHardwareTelemetry } from '../store/slices/swarmSlice';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Box, Float, PerspectiveCamera, Environment, ContactShadows, RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
+import { WebGLCanvasBoundary } from '../components/WebGLCanvasBoundary';
 
 function Device3D({ telemetry }: { telemetry: any }) {
   const mesh = useRef<THREE.Mesh>(null);
@@ -117,10 +118,12 @@ export default function Hardware() {
       {/* Background FX */}
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(0,255,136,0.05)_0%,transparent_50%)] pointer-events-none"></div>
       <div className="fixed inset-0 opacity-10 pointer-events-none">
-        <Canvas>
-          <PerspectiveCamera makeDefault position={[0, 0, 10]} />
-          <BackgroundParticles />
-        </Canvas>
+        <WebGLCanvasBoundary>
+          <Canvas>
+            <PerspectiveCamera makeDefault position={[0, 0, 10]} />
+            <BackgroundParticles />
+          </Canvas>
+        </WebGLCanvasBoundary>
       </div>
       
       <div className="w-full max-w-6xl z-10">
@@ -249,15 +252,21 @@ export default function Hardware() {
               </div>
 
               <div className="flex-1 flex items-center justify-center relative min-h-[300px]">
-                <Canvas>
-                  <PerspectiveCamera makeDefault position={[0, 0, 8]} />
-                  <ambientLight intensity={0.5} />
-                  <pointLight position={[10, 10, 10]} intensity={1} />
-                  <spotLight position={[-10, 10, 10]} angle={0.15} penumbra={1} />
-                  <Device3D telemetry={telemetry} />
-                  <ContactShadows position={[0, -2, 0]} opacity={0.4} scale={10} blur={2} far={4.5} />
-                  <Environment preset="city" />
-                </Canvas>
+                <WebGLCanvasBoundary fallback={
+                  <div className="flex h-full min-h-[300px] w-full items-center justify-center rounded-3xl border border-[#00ff88]/20 bg-[#00ff88]/5 text-[10px] font-black uppercase tracking-[0.3em] text-[#00ff88]/70">
+                    WEBGL_OFFLINE
+                  </div>
+                }>
+                  <Canvas>
+                    <PerspectiveCamera makeDefault position={[0, 0, 8]} />
+                    <ambientLight intensity={0.5} />
+                    <pointLight position={[10, 10, 10]} intensity={1} />
+                    <spotLight position={[-10, 10, 10]} angle={0.15} penumbra={1} />
+                    <Device3D telemetry={telemetry} />
+                    <ContactShadows position={[0, -2, 0]} opacity={0.4} scale={10} blur={2} far={4.5} />
+                    <Environment preset="city" />
+                  </Canvas>
+                </WebGLCanvasBoundary>
 
                 {/* Axis Indicators */}
                 <div className="absolute bottom-0 left-0 flex flex-col gap-4">
