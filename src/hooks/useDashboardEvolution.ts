@@ -6,6 +6,7 @@ import { setDailyImprovements, addLog } from '../store/slices/swarmSlice';
 export function useDashboardEvolution() {
   const dispatch = useDispatch();
   const evolution = useSelector((state: RootState) => state.swarm.evolution);
+  const dailyImprovements = useSelector((state: RootState) => state.swarm.dailyImprovements);
 
   const log = useCallback((msg: string, origin = 'SYSTEM', type: 'info' | 'success' | 'error' | 'warning' = 'info') => {
     dispatch(addLog({ message: msg, origin, type }));
@@ -43,5 +44,5 @@ export function useDashboardEvolution() {
     }
   }, [dispatch, evolution?.lastSweep, log]);
 
-  return null;
+  return { dailyImprovements };
 }
