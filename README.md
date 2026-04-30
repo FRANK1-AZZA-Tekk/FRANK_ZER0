@@ -64,6 +64,17 @@ Compile e faça o upload do sketch `hardware/yby_esp32.ino` usando a IDE do Ardu
 ### Android
 Abra a pasta `android` no Android Studio e compile o APK.
 
+### MOBILE_NODE Termux (sem root)
+```bash
+cd mobile
+cp .env.example .env
+./setup_mobile.sh
+python terminal_hud.py
+```
+
+- Configure `FRANK_PC_HOST` no `.env` com o IP Wi-Fi/Tailscale do PC.
+- O menu consulta `/status`, envia prompts para `/chat` e aciona `/evolve`.
+
 ## Princípios de Design
 
 - **Function Over Form:** O código deve ser o mais limpo e eficiente possível.

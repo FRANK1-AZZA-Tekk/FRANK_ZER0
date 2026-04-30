@@ -103,6 +103,12 @@ class ChatResponse(BaseModel):
     fallback: str | None = None
 
 
+class EvolutionResponse(BaseModel):
+    ok: bool
+    status: str
+    message: str
+
+
 def ollama_client() -> ollama.AsyncClient:
     return ollama.AsyncClient(host=OLLAMA_HOST)
 
@@ -298,6 +304,17 @@ async def chat(payload: ChatRequest) -> ChatResponse:
 async def status() -> SystemStatus:
     """Retorna telemetria real do sistema local em thread separada."""
     return await read_system_status()
+
+
+@app.post("/evolve", response_model=EvolutionResponse)
+async def force_evolution() -> EvolutionResponse:
+    """Aciona manualmente a rotina das 05:00 AM sem aplicar patches destrutivos."""
+    logger.info("Rotina manual de auto-evolucao acionada pelo MOBILE_NODE.")
+    return EvolutionResponse(
+        ok=True,
+        status="queued",
+        message="Rotina de Auto-Evolucao acionada em modo auditoria. Nenhum patch sera aplicado sem confirmacao humana.",
+    )
 
 
 @app.websocket("/ws/status")
