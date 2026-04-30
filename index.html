@@ -1,14 +1,177 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#000000" />
-    <title>YBY CORTEX</title>
+    <title>FRANK // BUNKER DASHBOARD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              mono: ['JetBrains Mono', 'Fira Code', 'Consolas', 'monospace'],
+            },
+            colors: {
+              matrix: '#00ff66',
+              amber: '#ffb000',
+              bunker: '#050505',
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      html {
+        background: #000;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.035) 0,
+          rgba(255, 255, 255, 0.035) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+        opacity: 0.22;
+        z-index: 50;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          radial-gradient(rgba(0, 255, 102, 0.08) 1px, transparent 1px),
+          radial-gradient(rgba(255, 176, 0, 0.04) 1px, transparent 1px);
+        background-position: 0 0, 7px 11px;
+        background-size: 19px 19px, 23px 23px;
+        opacity: 0.15;
+        z-index: 49;
+      }
+
+      .terminal-line::before {
+        content: "> ";
+        color: #ffb000;
+      }
+    </style>
   </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+  <body class="min-h-screen bg-black text-matrix font-mono antialiased">
+    <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-4 p-3 sm:p-5 lg:p-8">
+      <header class="border border-matrix/70 p-4 sm:p-5">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p class="text-xs uppercase tracking-[0.45em] text-amber">Projeto FRANK</p>
+            <h1 class="mt-2 text-3xl font-black uppercase tracking-[0.18em] text-matrix sm:text-5xl">
+              Bunker Digital
+            </h1>
+          </div>
+          <div class="text-left text-xs uppercase tracking-[0.25em] text-matrix/70 sm:text-right">
+            <p>Function Over Form</p>
+            <p>Ryzen 5 // GTX 1650 // 16GB</p>
+          </div>
+        </div>
+      </header>
+
+      <section class="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-[1fr_1.35fr]">
+        <div class="flex flex-col gap-4">
+          <section class="border border-matrix/70 p-4">
+            <div class="mb-4 flex items-center justify-between border-b border-matrix/40 pb-3">
+              <h2 class="text-sm font-bold uppercase tracking-[0.28em] text-amber">[SYS_STATUS]</h2>
+              <span class="text-xs text-matrix/70">ONLINE</span>
+            </div>
+
+            <div class="space-y-4 text-sm">
+              <div>
+                <div class="mb-1 flex justify-between">
+                  <span>CPU // Ryzen 5 4600G</span>
+                  <span class="text-amber">42%</span>
+                </div>
+                <div class="h-2 border border-matrix/60">
+                  <div class="h-full w-[42%] bg-matrix"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="mb-1 flex justify-between">
+                  <span>RAM // 16GB DDR4</span>
+                  <span class="text-amber">61%</span>
+                </div>
+                <div class="h-2 border border-matrix/60">
+                  <div class="h-full w-[61%] bg-matrix"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="mb-1 flex justify-between">
+                  <span>GPU // GTX 1650</span>
+                  <span class="text-amber">28%</span>
+                </div>
+                <div class="h-2 border border-matrix/60">
+                  <div class="h-full w-[28%] bg-matrix"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="border border-amber/70 p-4">
+            <div class="mb-4 border-b border-amber/40 pb-3">
+              <h2 class="text-sm font-bold uppercase tracking-[0.28em] text-amber">[ACTIVE_AGENTS]</h2>
+            </div>
+
+            <ul class="space-y-3 text-sm uppercase tracking-[0.16em]">
+              <li class="flex justify-between border-b border-matrix/20 pb-2">
+                <span>heartbeat.py</span>
+                <span class="text-amber">watch</span>
+              </li>
+              <li class="flex justify-between border-b border-matrix/20 pb-2">
+                <span>ollama_probe</span>
+                <span class="text-amber">standby</span>
+              </li>
+              <li class="flex justify-between border-b border-matrix/20 pb-2">
+                <span>gpu_sentinel</span>
+                <span class="text-amber">idle</span>
+              </li>
+              <li class="flex justify-between">
+                <span>termux_bridge</span>
+                <span class="text-amber">no-root</span>
+              </li>
+            </ul>
+          </section>
+        </div>
+
+        <section class="flex min-h-[420px] flex-col border border-matrix/70 p-4">
+          <div class="mb-4 flex items-center justify-between border-b border-matrix/40 pb-3">
+            <h2 class="text-sm font-bold uppercase tracking-[0.28em] text-amber">[NEURAL_LOG]</h2>
+            <span class="animate-pulse text-xs uppercase tracking-[0.2em] text-matrix">stream</span>
+          </div>
+
+          <div class="flex-1 overflow-hidden bg-bunker p-3 text-xs leading-6 text-matrix sm:text-sm">
+            <p class="terminal-line">bootando núcleo FRANK...</p>
+            <p class="terminal-line">checando barramento Ryzen 5 // OK</p>
+            <p class="terminal-line">memória física detectada: 16GB // OK</p>
+            <p class="terminal-line">GPU GTX 1650 em modo sentinela // OK</p>
+            <p class="terminal-line">Termux bridge: sem root // compatível</p>
+            <p class="terminal-line">Ollama local: aguardando handshake 11434</p>
+            <p class="terminal-line text-amber">protocolo bunker: legibilidade acima de ornamento</p>
+            <p class="terminal-line">agentes ativos sincronizados</p>
+            <p class="terminal-line">estado final: SISTEMA ESTÁVEL</p>
+            <p class="terminal-line animate-pulse">cursor aguardando próximo comando...</p>
+          </div>
+        </section>
+      </section>
+
+      <footer class="border border-matrix/40 p-3 text-center text-[10px] uppercase tracking-[0.28em] text-matrix/60">
+        FRANK // BUNKER DIGITAL // SOBERANIA LOCAL // MOBILE-FIRST
+      </footer>
+    </main>
   </body>
 </html>
 
