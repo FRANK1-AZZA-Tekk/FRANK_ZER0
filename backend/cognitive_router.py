@@ -17,7 +17,7 @@ from pydantic import BaseModel
 
 load_dotenv()
 
-RouteName = Literal["ollama", "groq", "deepseek", "gemini", "perplexity"]
+RouteName = Literal["ollama", "groq", "deepseek", "gemini", "perplexity", "vast"]
 
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434").rstrip("/")
 DEFAULT_OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3")
@@ -46,6 +46,12 @@ class NexusRouter:
         if re.search(r"\b(pesquise|pesquisar|busque|buscar|hoje|notícias|noticias|internet|tempo real)\b", text):
             return "perplexity"
 
+        if os.getenv("VAST_INFERENCE_URL") and re.search(
+            r"\b(vast|gpu pesada|3090|4090|rtx 6000|modelo grande|contexto extremo)\b",
+            text,
+        ):
+            return "vast"
+
         if re.search(r"\b(analise este log|analise o log|stacktrace|traceback|grande bloco|contexto longo|raciocínio|raciocinio)\b", text):
             return "deepseek" if os.getenv("DEEPSEEK_API_KEY") else "gemini"
 
@@ -66,6 +72,8 @@ class NexusRouter:
                 return await self._deepseek(prompt)
             if selected == "gemini":
                 return await self._gemini(prompt)
+            if selected == "vast":
+                return await self._vast(prompt)
             return await self._ollama(prompt, preferred_model)
         except Exception as exc:
             logger.error(f"NexusRouter falhou em {selected}: {type(exc).__name__}: {exc}")
@@ -140,6 +148,25 @@ class NexusRouter:
             system="Você pesquisa dados atuais e responde com fatos diretos em português-BR.",
         )
         return RouterResult(ok=True, route="perplexity", model=model, response=self._choice_text(data))
+
+    async def _vast(self, prompt: str) -> RouterResult:
+        base_url = os.getenv("VAST_INFERENCE_URL", "").rstrip("/")
+        if not base_url:
+            raise RuntimeError("VAST_INFERENCE_URL ausente no .env")
+
+        model = os.getenv("VAST_MODEL", "local-heavy-model")
+        chat_url = (
+            f"{base_url}/chat/completions"
+            if base_url.endswith("/v1")
+            else f"{base_url}/v1/chat/completions"
+        )
+        data = await self._openai_compatible(
+            chat_url,
+            os.getenv("VAST_API_KEY", "not-required"),
+            model,
+            prompt,
+        )
+        return RouterResult(ok=True, route="vast", model=model, response=self._choice_text(data))
 
     async def _openai_compatible(
         self,
