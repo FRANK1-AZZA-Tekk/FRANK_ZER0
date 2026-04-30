@@ -8,6 +8,8 @@ import base64
 import json
 import logging
 
+FALLBACK_ORDER = ["groq", "gemini", "openrouter", "deepseek", "openai", "perplexity", "local_gpu"]
+
 class YBYRouter:
     """
     Router inteligente para 7 APIs com fallback e otimização de latência/custo.
@@ -56,8 +58,15 @@ class YBYRouter:
 
         provider_config = self.providers.get(selected_provider)
         if not provider_config or not provider_config["api_key"]:
-            selected_provider = "openrouter"
-            provider_config = self.providers["openrouter"]
+            selected_provider = next(
+                (
+                    provider
+                    for provider in FALLBACK_ORDER
+                    if self.providers[provider].get("api_key")
+                ),
+                "local_gpu",
+            )
+            provider_config = self.providers[selected_provider]
 
         try:
             if selected_provider == "local_gpu":
