@@ -13,6 +13,7 @@ from typing import Any, Literal
 
 import ollama
 import psutil
+from backend.cognitive_router import NexusRouter
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
@@ -33,6 +34,7 @@ logger.add(
     backtrace=False,
     diagnose=False,
 )
+nexus_router = NexusRouter()
 
 app = FastAPI(
     title="FRANK Exocortex API",
@@ -281,23 +283,13 @@ async def chat(payload: ChatRequest) -> ChatResponse:
             fallback=cloud_fallback_hint(),
         )
 
-    try:
-        client = ollama_client()
-        model = await available_ollama_model(client, payload.model)
-        result = await client.chat(
-            model=model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": "Você é o FRANK, um exocórtex local. Responda em português-BR, direto e útil.",
-                },
-                {"role": "user", "content": payload.message},
-            ],
-        )
-        return ChatResponse(ok=True, model=model, response=result["message"]["content"])
-    except Exception as exc:
-        logger.error(f"Falha no link Ollama: {type(exc).__name__}: {exc}")
-        return ChatResponse(ok=False, model=payload.model, response=NEURAL_LINK_ERROR)
+    routed = await nexus_router.route(payload.message, preferred_model=payload.model)
+    return ChatResponse(
+        ok=routed.ok,
+        model=routed.model,
+        response=routed.response or NEURAL_LINK_ERROR,
+        fallback=routed.fallback,
+    )
 
 
 @app.get("/status", response_model=SystemStatus)
