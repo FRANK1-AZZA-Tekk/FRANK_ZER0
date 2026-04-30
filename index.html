@@ -85,38 +85,39 @@
           <section class="border border-matrix/70 p-4">
             <div class="mb-4 flex items-center justify-between border-b border-matrix/40 pb-3">
               <h2 class="text-sm font-bold uppercase tracking-[0.28em] text-amber">[SYS_STATUS]</h2>
-              <span class="text-xs text-matrix/70">ONLINE</span>
+              <span id="thermal-status" class="text-xs text-matrix/70">ONLINE</span>
             </div>
 
             <div class="space-y-4 text-sm">
               <div>
                 <div class="mb-1 flex justify-between">
                   <span>CPU // Ryzen 5 4600G</span>
-                  <span class="text-amber">42%</span>
+                  <span id="cpu-value" class="text-amber">42%</span>
                 </div>
                 <div class="h-2 border border-matrix/60">
-                  <div class="h-full w-[42%] bg-matrix"></div>
+                  <div id="cpu-bar" class="h-full w-[42%] bg-matrix"></div>
                 </div>
               </div>
 
               <div>
                 <div class="mb-1 flex justify-between">
                   <span>RAM // 16GB DDR4</span>
-                  <span class="text-amber">61%</span>
+                  <span id="ram-value" class="text-amber">61%</span>
                 </div>
                 <div class="h-2 border border-matrix/60">
-                  <div class="h-full w-[61%] bg-matrix"></div>
+                  <div id="ram-bar" class="h-full w-[61%] bg-matrix"></div>
                 </div>
               </div>
 
               <div>
                 <div class="mb-1 flex justify-between">
                   <span>GPU // GTX 1650</span>
-                  <span class="text-amber">28%</span>
+                  <span id="gpu-value" class="text-amber">N/A</span>
                 </div>
                 <div class="h-2 border border-matrix/60">
-                  <div class="h-full w-[28%] bg-matrix"></div>
+                  <div id="gpu-bar" class="h-full w-[0%] bg-matrix"></div>
                 </div>
+                <p id="temperature-line" class="mt-2 text-xs text-matrix/60">TEMP // aguardando sensores</p>
               </div>
             </div>
           </section>
@@ -153,7 +154,7 @@
             <span class="animate-pulse text-xs uppercase tracking-[0.2em] text-matrix">stream</span>
           </div>
 
-          <div class="flex-1 overflow-hidden bg-bunker p-3 text-xs leading-6 text-matrix sm:text-sm">
+          <div id="neural-log" class="flex-1 overflow-hidden bg-bunker p-3 text-xs leading-6 text-matrix sm:text-sm">
             <p class="terminal-line">bootando núcleo FRANK...</p>
             <p class="terminal-line">checando barramento Ryzen 5 // OK</p>
             <p class="terminal-line">memória física detectada: 16GB // OK</p>
@@ -172,6 +173,61 @@
         FRANK // BUNKER DIGITAL // SOBERANIA LOCAL // MOBILE-FIRST
       </footer>
     </main>
+    <script>
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const logBox = document.getElementById('neural-log');
+
+      function clampPercent(value) {
+        const number = Number(value);
+        if (!Number.isFinite(number)) return 0;
+        return Math.max(0, Math.min(100, number));
+      }
+
+      function setMetric(valueId, barId, value) {
+        const percent = clampPercent(value);
+        document.getElementById(valueId).textContent = `${percent.toFixed(1)}%`;
+        document.getElementById(barId).style.width = `${percent}%`;
+      }
+
+      function pushLog(message, amber = false) {
+        const line = document.createElement('p');
+        line.className = `terminal-line${amber ? ' text-amber' : ''}`;
+        line.textContent = message;
+        logBox.appendChild(line);
+        while (logBox.children.length > 12) logBox.removeChild(logBox.firstElementChild);
+      }
+
+      function applyTelemetry(payload) {
+        setMetric('cpu-value', 'cpu-bar', payload.cpu?.usage_percent);
+        setMetric('ram-value', 'ram-bar', payload.ram?.used_percent);
+        setMetric('gpu-value', 'gpu-bar', payload.gpu?.usage_percent);
+
+        const cpuTemp = payload.cpu?.temperature?.celsius;
+        const gpuTemp = payload.gpu?.temperature?.celsius;
+        const hottest = [cpuTemp, gpuTemp].filter(Number.isFinite).sort((a, b) => b - a)[0];
+        const thermal = payload.thermal?.mode || 'normal';
+        document.getElementById('thermal-status').textContent = thermal.toUpperCase();
+        document.getElementById('temperature-line').textContent =
+          `TEMP // CPU ${cpuTemp ?? 'N/A'}°C // GPU ${gpuTemp ?? 'N/A'}°C`;
+
+        if (thermal !== 'normal') {
+          pushLog(`proteção térmica ativa // ${hottest ?? 'sensor'}°C // reduzindo varredura`, true);
+        }
+      }
+
+      function connectTelemetry() {
+        const socket = new WebSocket(`${wsProtocol}//${window.location.hostname}:8001/ws/status`);
+        socket.onopen = () => pushLog('websocket de telemetria conectado');
+        socket.onmessage = (event) => applyTelemetry(JSON.parse(event.data));
+        socket.onerror = () => pushLog('falha no websocket de telemetria', true);
+        socket.onclose = () => {
+          pushLog('telemetria desconectada // tentando reconectar', true);
+          setTimeout(connectTelemetry, 3000);
+        };
+      }
+
+      connectTelemetry();
+    </script>
   </body>
 </html>
 

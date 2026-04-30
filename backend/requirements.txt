@@ -2,6 +2,8 @@ fastapi
 uvicorn
 ollama
 psutil
+loguru
+websockets
 crewai
 langchain-google-genai
 langchain-groq
