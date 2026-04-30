@@ -6,6 +6,8 @@ O YBY é um exocórtex cibernético, uma extensão do corpo, mente e alma do usu
 
 A versão V26 introduz a arquitetura de **Agentes Híbridos (Swarm)** e **Zero UI**, otimizada para wearables (Lilygo T-Watch S3) e smartphones (Xiaomi 12).
 
+Para a arquitetura operacional completa da base local-first, consulte [`docs/FRANK_ZERO_STACK.md`](docs/FRANK_ZERO_STACK.md).
+
 ### Componentes Principais
 
 1. **Backend (FastAPI + LangGraph)**
