@@ -43,6 +43,16 @@ pip install -r requirements.txt
 python app.py
 ```
 
+### Backend FRANK FastAPI (Ollama + Telemetria)
+```bash
+pip install -r backend/requirements.txt
+python -m uvicorn backend.frank_api:app --host 127.0.0.1 --port 8001
+```
+
+- `POST /chat`: envia mensagem ao Ollama local (`llama3` ou modelo disponível).
+- `GET /status`: lê CPU, RAM e temperatura via `psutil`.
+- Se Ollama estiver offline, retorna `[ERRO_DE_LINK_NEURAL]: Ollama não detectado`.
+
 ### Frontend (PWA)
 O frontend é servido automaticamente pelo `server.ts` na porta 3000.
 

@@ -1,5 +1,7 @@
 fastapi
 uvicorn
+ollama
+psutil
 crewai
 langchain-google-genai
 langchain-groq
