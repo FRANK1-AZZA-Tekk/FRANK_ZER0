@@ -4,7 +4,7 @@ import { Sparkles, TerminalSquare, AlertTriangle, Check, Shield, FileCode2, Chev
 import { useDispatch } from 'react-redux';
 import { addLog } from '../../store/slices/swarmSlice';
 
-interface FRANKScanModalProps {
+interface YBYScanModalProps {
   scanId: string;
   report: string;
   diff: string;
@@ -12,7 +12,7 @@ interface FRANKScanModalProps {
   onApprove: (id: string) => Promise<boolean>;
 }
 
-export function FRANKScanModal({ scanId, report, diff, onClose, onApprove }: FRANKScanModalProps) {
+export function YBYScanModal({ scanId, report, diff, onClose, onApprove }: YBYScanModalProps) {
   const dispatch = useDispatch();
   const [isMerging, setIsMerging] = useState(false);
   const [mergeProgress, setMergeProgress] = useState(0);
@@ -78,7 +78,7 @@ export function FRANKScanModal({ scanId, report, diff, onClose, onApprove }: FRA
                 <TerminalSquare size={28} className="text-blue-400" />
               </div>
               <div>
-                <h2 className="text-2xl font-black text-white tracking-widest uppercase">Relatório FRANK-SCAN</h2>
+                <h2 className="text-2xl font-black text-white tracking-widest uppercase">Relatório YBY-SCAN</h2>
                 <p className="text-xs text-blue-400 font-mono mt-1">ID: {scanId} | STATUS: AGUARDANDO APROVAÇÃO</p>
               </div>
             </div>
@@ -113,7 +113,7 @@ export function FRANKScanModal({ scanId, report, diff, onClose, onApprove }: FRA
                   <span className="text-[10px] font-black tracking-widest uppercase">Human-in-the-Loop Requerido</span>
                 </div>
                 <p className="text-[10px] text-gray-400 font-mono leading-relaxed">
-                  O FRANK-SCAN propôs uma alteração direta no `server.ts`. 
+                  O YBY-SCAN propôs uma alteração direta no `server.ts`. 
                   Revise o diff de código minuciosamente antes de aprovar. 
                   Um snapshot automático .bak será criado por segurança.
                 </p>

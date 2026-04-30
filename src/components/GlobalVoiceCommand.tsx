@@ -52,7 +52,7 @@ export function GlobalVoiceCommand() {
       await persistenceService.saveResponse({ transcript, response });
       setIsSaved(true);
       dispatch(addLog({
-        message: 'Resposta FRANK persistida no IndexedDB local.',
+        message: 'Resposta YBY persistida no IndexedDB local.',
         origin: 'MEMORY',
         type: 'success'
       }));
@@ -234,15 +234,15 @@ export function GlobalVoiceCommand() {
       ];
       
       if (visionKeywords.some(keyword => lowerText.includes(keyword))) {
-        setResponse('FRANK_VISION: Ativando sensores ópticos. Aguardando captura...');
+        setResponse('YBY_VISION: Ativando sensores ópticos. Aguardando captura...');
         handleCameraClick();
       } else {
-        setResponse(data.frank_response || 'Comando processado com sucesso.');
+        setResponse(data.yby_response || 'Comando processado com sucesso.');
       }
       
       dispatch(addLog({
-        message: `${data.frank_response || 'Comando interceptado.'}`,
-        origin: 'FRANK',
+        message: `${data.yby_response || 'Comando interceptado.'}`,
+        origin: 'YBY',
         type: 'success'
       }));
       dispatch(addLog({
@@ -407,7 +407,7 @@ export function GlobalVoiceCommand() {
               <div className="flex items-center gap-3">
                 <Cpu size={18} className={isListening ? "text-[#ff00ff] animate-pulse" : "text-[#00ff88]"} />
                 <span className="text-[10px] font-black tracking-[0.2em] uppercase text-white">
-                  {isListening ? 'OUVINDO...' : isProcessing ? 'PROCESSANDO...' : 'RESPOSTA_FRANK'}
+                  {isListening ? 'OUVINDO...' : isProcessing ? 'PROCESSANDO...' : 'RESPOSTA_YBY'}
                 </span>
               </div>
               <button onClick={closeOverlay} className="text-gray-500 hover:text-white transition-colors">

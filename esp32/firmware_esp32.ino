@@ -1,5 +1,5 @@
 /**
- * FRANK CORTEX 2026 - ESP32 SOTA Firmware
+ * YBY CORTEX 2026 - ESP32 SOTA Firmware
  * Hardware: ESP32-S3 (AtomS3R / T-Watch S3)
  * Features: BLE MTU 512, Opus Codec, LVGL 60fps, WebSerial
  */
@@ -45,18 +45,18 @@ void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
 class MyServerCallbacks: public BLEServerCallbacks {
     void onConnect(BLEServer* pServer) {
       deviceConnected = true;
-      Serial.println("FRANK CORTEX: Conectado via BLE (MTU 512)");
+      Serial.println("YBY CORTEX: Conectado via BLE (MTU 512)");
     };
     void onDisconnect(BLEServer* pServer) {
       deviceConnected = false;
-      Serial.println("FRANK CORTEX: Desconectado");
+      Serial.println("YBY CORTEX: Desconectado");
       BLEDevice::startAdvertising();
     }
 };
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("FRANK CORTEX 2026 - ESP32 SOTA Booting...");
+  Serial.println("YBY CORTEX 2026 - ESP32 SOTA Booting...");
 
   // LVGL Init
   lv_init();
@@ -76,7 +76,7 @@ void setup() {
   decoder = opus_decoder_create(24000, 1, &error);
 
   // BLE Setup
-  BLEDevice::init("FRANK_CORTEX_SOTA");
+  BLEDevice::init("YBY_CORTEX_SOTA");
   BLEDevice::setMTU(512); // Otimização de latência
   BLEServer *pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
@@ -100,7 +100,7 @@ void setup() {
 
   // UI Cyberpunk (LVGL)
   lv_obj_t * label = lv_label_create(lv_scr_act());
-  lv_label_set_text(label, "FRANK CORTEX 2026\nSOTA ONLINE");
+  lv_label_set_text(label, "YBY CORTEX 2026\nSOTA ONLINE");
   lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
   lv_obj_set_style_text_color(label, lv_palette_main(LV_PALETTE_GREEN), 0);
 }

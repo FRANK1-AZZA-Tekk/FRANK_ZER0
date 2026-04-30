@@ -21,7 +21,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
 
 void setup() {
   Serial.begin(115200);
-  BLEDevice::init("FRANK_ATOMS3R");
+  BLEDevice::init("YBY_ATOMS3R");
   BLEDevice::setMTU(512); // Increase MTU to 512 bytes to optimize data transfer speed
   pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());

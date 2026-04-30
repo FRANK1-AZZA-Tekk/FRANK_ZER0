@@ -8,7 +8,7 @@ import base64
 import json
 import logging
 
-class FrankRouter:
+class YBYRouter:
     """
     Router inteligente para 7 APIs com fallback e otimização de latência/custo.
     """
@@ -74,7 +74,7 @@ class FrankRouter:
                 client = genai.Client(api_key=provider_config["api_key"])
                 
                 system_instruction = """
-                Role: Advanced visual intelligence system for FRANK CORTEX 2026 (Wearable AI).
+                Role: Advanced visual intelligence system for YBY CORTEX 2026 (Wearable AI).
                 Task: Analyze the provided image with high precision and sub-100ms processing intent.
                 Response Format: STRICT JSON.
                 """
@@ -139,4 +139,4 @@ class FrankRouter:
         except Exception as e:
             return {"error": str(e), "provider": selected_provider, "intent": intent}
 
-frank_router = FrankRouter()
+yby_router = YBYRouter()

@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: FRANK AI CORTEX Gestures API
+  title: YBY AI CORTEX Gestures API
   version: 2026.1.0
 paths:
   /swarm/gesture:

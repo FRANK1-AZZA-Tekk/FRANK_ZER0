@@ -21,7 +21,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
           className="fixed inset-0 bg-[#050505]/98 z-[60] flex flex-col items-center justify-center gap-8 p-8 sm:hidden"
         >
-          <div className="absolute top-12 left-12 text-[#00ff88]/5 font-black text-9xl tracking-tighter select-none pointer-events-none">FRANK</div>
+          <div className="absolute top-12 left-12 text-[#00ff88]/5 font-black text-9xl tracking-tighter select-none pointer-events-none">YBY</div>
           
           <div className="flex flex-col items-center gap-6 w-full max-w-xs">
             {MAIN_NAV_ITEMS.map((item) => (

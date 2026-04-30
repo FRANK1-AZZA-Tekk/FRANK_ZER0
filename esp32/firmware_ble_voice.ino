@@ -1,5 +1,5 @@
 /**
- * FRANK CORTEX 2026 - ESP32 Firmware
+ * YBY CORTEX 2026 - ESP32 Firmware
  * Hardware: T-Watch S3 / AtomS3R
  * BLE Voice Streamer + IMU Gesture Node
  */
@@ -20,21 +20,21 @@ bool deviceConnected = false;
 class MyServerCallbacks: public BLEServerCallbacks {
     void onConnect(BLEServer* pServer) {
       deviceConnected = true;
-      Serial.println("FRANK CORTEX: Conectado via BLE");
+      Serial.println("YBY CORTEX: Conectado via BLE");
     };
 
     void onDisconnect(BLEServer* pServer) {
       deviceConnected = false;
-      Serial.println("FRANK CORTEX: Desconectado");
+      Serial.println("YBY CORTEX: Desconectado");
     }
 };
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("FRANK CORTEX 2026 - ESP32 Node Booting...");
+  Serial.println("YBY CORTEX 2026 - ESP32 Node Booting...");
 
   // BLE Setup
-  BLEDevice::init("FRANK_CORTEX_NODE_0XAF");
+  BLEDevice::init("YBY_CORTEX_NODE_0XAF");
   BLEDevice::setMTU(512); // Increase MTU to 512 bytes to optimize data transfer speed
   BLEServer *pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());

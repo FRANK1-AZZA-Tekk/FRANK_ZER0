@@ -8,7 +8,7 @@ router = APIRouter(prefix="/health", tags=["Health"])
 @router.get("/live")
 async def liveness_probe():
     """Liveness probe para Kubernetes/Docker."""
-    return {"status": "alive", "system": "FRANK_CORTEX_2026"}
+    return {"status": "alive", "system": "YBY_CORTEX_2026"}
 
 @router.get("/ready")
 async def readiness_probe():
@@ -20,7 +20,7 @@ async def readiness_probe():
             raise Exception("Redis not responding")
         
         # DB Ping (SQLite)
-        conn = sqlite3.connect("frank.db")
+        conn = sqlite3.connect("yby.db")
         cursor = conn.cursor()
         cursor.execute("SELECT 1")
         conn.close()

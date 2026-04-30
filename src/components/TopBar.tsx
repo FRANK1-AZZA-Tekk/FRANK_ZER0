@@ -44,7 +44,7 @@ export function TopBar({
       const { generateOptimizations } = await import('../utils/gemini');
       const results = await generateOptimizations();
       
-      const reportText = `### 🚀 FRANK Exocortex Optimization Report
+      const reportText = `### 🚀 YBY Exocortex Optimization Report
 
 **Target:** Performance, Battery Life, and Latency
 
@@ -101,7 +101,7 @@ ${results.map((opt, i) => `${i + 1}. **${opt}**`).join('\n')}
             <div className="absolute -top-1 -right-1 w-2 h-2 bg-[#00ff88] rounded-full blur-[2px] animate-ping"></div>
           </div>
           <div className="flex flex-col">
-            <span className="text-[10px] font-black tracking-[0.3em] leading-none">FRANK_CORTEX</span>
+            <span className="text-[10px] font-black tracking-[0.3em] leading-none">YBY_CORTEX</span>
             <span className="text-[8px] text-gray-500 font-bold tracking-widest mt-0.5">v3.0.4_STABLE</span>
           </div>
         </motion.div>
@@ -193,7 +193,7 @@ ${results.map((opt, i) => `${i + 1}. **${opt}**`).join('\n')}
                 <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
                   <div className="flex items-center gap-3">
                     <Zap size={20} className="text-[#00ff88] animate-pulse" />
-                    <h3 className="text-[#00ff88] font-black tracking-[0.2em] uppercase text-sm">FRANK-SCAN v1.2</h3>
+                    <h3 className="text-[#00ff88] font-black tracking-[0.2em] uppercase text-sm">YBY-SCAN v1.2</h3>
                   </div>
                   <button onClick={() => setIsScanOpen(false)} className="text-gray-500 hover:text-white transition-colors">
                     <X size={20} />

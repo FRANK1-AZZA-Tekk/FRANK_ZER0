@@ -3,7 +3,7 @@ from typing import Annotated, TypedDict, List, Dict, Any
 from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
 from crewai import Agent, Task, Crew, Process
-from core.llm import frank_router
+from core.llm import yby_router
 from core.config import settings
 from crew.neo4j_tools import Neo4jMemoryTools
 from google import genai
@@ -22,7 +22,7 @@ class AgentState(TypedDict):
     supervisor_approval: bool
 
 # --- Agent Definitions (CrewAI + LangGraph) ---
-class FrankSwarm:
+class YBYSwarm:
     def __init__(self):
         self.neo4j_tools = Neo4jMemoryTools()
         self.agents = self._init_agents()
@@ -134,7 +134,7 @@ class FrankSwarm:
     async def _node_router(self, state: AgentState):
         prompt = state["messages"][-1]["content"]
         # Passa o histórico de mensagens para o roteador se necessário
-        result = await frank_router.route(prompt)
+        result = await yby_router.route(prompt)
         state["results"]["router"] = result
         state["intent"] = result.get("intent", "general")
         return state
@@ -164,7 +164,7 @@ class FrankSwarm:
         memory_context = self.neo4j_tools.search_memory(user_id, prompt)
         
         # Registra a interação
-        self.neo4j_tools.log_interaction(user_id, "Frank", "query", prompt)
+        self.neo4j_tools.log_interaction(user_id, "YBY", "query", prompt)
         
         state["memory"]["umem"] = memory_context
         state["results"]["memory"] = memory_context
@@ -202,12 +202,12 @@ class FrankSwarm:
             prompt = "Analyze this image for a wearable AI. Focus on critical patches. Return JSON."
             
             # Chama o roteador centralizado com a intenção 'vision'
-            result_router = await frank_router.route(prompt, intent="vision", image_base64=image_base64)
+            result_router = await yby_router.route(prompt, intent="vision", image_base64=image_base64)
             
             if "error" in result_router:
                 raise Exception(result_router["error"])
 
-            # O FrankRouter retorna o conteúdo em 'response'
+            # O YBYRouter retorna o conteúdo em 'response'
             content = result_router["response"]
             
             # Processamento do JSON extraído
@@ -248,4 +248,4 @@ class FrankSwarm:
                 "confidence": "0%"
             }
 
-frank_swarm = FrankSwarm()
+yby_swarm = YBYSwarm()

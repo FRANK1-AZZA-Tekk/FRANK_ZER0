@@ -82,7 +82,7 @@ export default function Memory() {
 
       const nodes = [
         { id: "USER_CORE", group: 1, label: "USER" },
-        { id: "FRANK_CORTEX", group: 2, label: "FRANK" },
+        { id: "YBY_CORTEX", group: 2, label: "YBY" },
         { id: "UMEM_OPTIMIZER", group: 3, label: "UMEM" },
         { id: "SEMANTIC_NEIGHBORHOOD", group: 4, label: "CLUSTERS" },
         { id: "BAYES_RAG", group: 5, label: "BAYES_RAG" },
@@ -91,13 +91,13 @@ export default function Memory() {
       ];
 
       const links = [
-        { source: "USER_CORE", target: "FRANK_CORTEX", value: 2 },
+        { source: "USER_CORE", target: "YBY_CORTEX", value: 2 },
         { source: "USER_CORE", target: "UMEM_OPTIMIZER", value: 1 },
-        { source: "FRANK_CORTEX", target: "SEMANTIC_NEIGHBORHOOD", value: 2 },
+        { source: "YBY_CORTEX", target: "SEMANTIC_NEIGHBORHOOD", value: 2 },
         { source: "SEMANTIC_NEIGHBORHOOD", target: "BAYES_RAG", value: 1 },
         { source: "BAYES_RAG", target: "ZVEC_CHROMA", value: 3 },
         { source: "ZVEC_CHROMA", target: "LANCEDB", value: 3 },
-        { source: "FRANK_CORTEX", target: "LANCEDB", value: 1 },
+        { source: "YBY_CORTEX", target: "LANCEDB", value: 1 },
       ];
 
       const simulation = d3.forceSimulation(nodes as any)
@@ -319,7 +319,7 @@ export default function Memory() {
                   </div>
                   <div className="flex items-center gap-1">
                     <div className="w-1.5 h-1.5 rounded-full bg-[#00ff88]"></div>
-                    <span className="text-[8px] text-gray-600 font-bold uppercase tracking-widest">Frank</span>
+                    <span className="text-[8px] text-gray-600 font-bold uppercase tracking-widest">YBY</span>
                   </div>
                 </div>
               </div>
@@ -451,7 +451,7 @@ export default function Memory() {
                   </div>
                   
                   <div className="flex flex-col gap-2">
-                    <p className="text-[10px] text-[#00ff88] font-black uppercase tracking-widest">Frank:</p>
+                    <p className="text-[10px] text-[#00ff88] font-black uppercase tracking-widest">YBY:</p>
                     <p className="text-sm text-gray-200 leading-relaxed font-mono">
                       {item.response}
                     </p>

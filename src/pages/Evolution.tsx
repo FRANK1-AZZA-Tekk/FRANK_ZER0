@@ -18,7 +18,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { addLog } from '../store/slices/swarmSlice';
 import { getApiUrl } from '../utils/api';
-import { FRANKScanModal } from '../components/Dashboard/FRANKScanModal';
+import { YBYScanModal } from '../components/Dashboard/YBYScanModal';
 
 export default function Evolution() {
   const dispatch = useDispatch();
@@ -27,7 +27,7 @@ export default function Evolution() {
   const [offlineMode, setOfflineMode] = useState(false);
   const [gestureNav, setGestureNav] = useState(true);
   
-  const [frankScanResult, setFrankScanResult] = useState<{ id: string, report: string, diff: string } | null>(null);
+  const [ybyScanResult, setYBYScanResult] = useState<{ id: string, report: string, diff: string } | null>(null);
 
   const handleDeepScan = async () => {
     setScanState('scanning');
@@ -55,7 +55,7 @@ export default function Evolution() {
         const reportData = await reportRes.json();
         
         if (reportRes.ok) {
-           setFrankScanResult({
+           setYBYScanResult({
              id: data.id,
              report: reportData.report,
              diff: reportData.diff
@@ -162,7 +162,7 @@ export default function Evolution() {
           </div>
 
           <p className="text-sm text-gray-400 font-mono mb-8 leading-relaxed">
-            Analisa GitHub, HuggingFace e fóruns acadêmicos em busca das últimas otimizações, correções e modelos de IA para a pilha do Exocortex FRANK:
+            Analisa GitHub, HuggingFace e fóruns acadêmicos em busca das últimas otimizações, correções e modelos de IA para a pilha do Exocortex YBY:
             <br/><br/>
             <span className="text-[#00ff88]">OpenWakeWord 2.0 • Whisper.cpp • Kokoro TTS • Llama.cpp + TurboQuant • Qwen2.5-Coder • ESP32-S3 (INMP441, Silero) • NimBLE • Tailscale • LanceDB</span>
           </p>
@@ -195,7 +195,7 @@ export default function Evolution() {
                 <span className="text-[10px] font-black text-[#00ff88] tracking-widest px-2 py-1 bg-[#00ff88]/10 border border-[#00ff88]/20 rounded-md shrink-0">HUMAN-IN-THE-LOOP</span>
               </div>
               <button 
-                onClick={() => frankScanResult ? setFrankScanResult({ ...frankScanResult }) : setScanState('idle')}
+                onClick={() => ybyScanResult ? setYBYScanResult({ ...ybyScanResult }) : setScanState('idle')}
                 className="mt-2 w-full py-4 rounded-xl box-shadow-[0_0_15px_rgba(0,120,255,0.4)] bg-blue-500 text-black font-black tracking-widest uppercase hover:bg-blue-400 transition-all font-bold"
               >
                 VISUALIZAR RELATÓRIO DO MERGE
@@ -330,13 +330,13 @@ export default function Evolution() {
       </div>
 
       <AnimatePresence>
-        {frankScanResult && (
-          <FRANKScanModal 
-            key="frank-scan-modal"
-            scanId={frankScanResult.id} 
-            report={frankScanResult.report} 
-            diff={frankScanResult.diff} 
-            onClose={() => setFrankScanResult(null)} 
+        {ybyScanResult && (
+          <YBYScanModal 
+            key="yby-scan-modal"
+            scanId={ybyScanResult.id} 
+            report={ybyScanResult.report} 
+            diff={ybyScanResult.diff} 
+            onClose={() => setYBYScanResult(null)} 
             onApprove={handleApproveMerge} 
           />
         )}

@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.frank.wearable"
+    namespace = "com.yby.wearable"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.frank.wearable"
+        applicationId = "com.yby.wearable"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

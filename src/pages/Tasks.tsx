@@ -14,7 +14,7 @@ interface Task {
 
 export default function Tasks() {
   const [tasks, setTasks] = useState<Task[]>(() => {
-    const savedTasks = localStorage.getItem('frank_tasks');
+    const savedTasks = localStorage.getItem('yby_tasks');
     if (savedTasks) {
       try {
         const parsedTasks = JSON.parse(savedTasks);
@@ -37,7 +37,7 @@ export default function Tasks() {
   const [isAddingTask, setIsAddingTask] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('frank_tasks', JSON.stringify(tasks));
+    localStorage.setItem('yby_tasks', JSON.stringify(tasks));
   }, [tasks]);
 
   const addTask = (e: React.FormEvent) => {

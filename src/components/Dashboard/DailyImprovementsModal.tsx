@@ -133,7 +133,7 @@ export function DailyImprovementsModal({ improvements }: DailyImprovementsModalP
           {/* Content */}
           <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-4">
             <p className="text-sm text-gray-400 font-mono mb-2 border-l-2 border-[#00ff88]/40 pl-4 italic">
-              FRANK harmonizou fluxos do GitHub, HuggingFace e seus padrões cognitivos. 
+              YBY harmonizou fluxos do GitHub, HuggingFace e seus padrões cognitivos. 
               As seguintes adaptações expandem sua malha exocortical (Corpo, Mente e Alma):
             </p>
 

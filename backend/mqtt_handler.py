@@ -4,7 +4,7 @@ import requests
 
 MQTT_BROKER = "localhost"
 MQTT_PORT = 1883
-VOICE_TOPIC = "frank/atoms3r/voice"
+VOICE_TOPIC = "yby/atoms3r/voice"
 
 def on_connect(client, userdata, flags, rc):
     print(f"Connected to MQTT Broker with result code {rc}")

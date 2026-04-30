@@ -90,7 +90,7 @@ export function CommandHub({ isOpen, onClose }: CommandHubProps) {
             {/* Content Area */}
             <div className="p-4 max-h-[60vh] overflow-y-auto scrollbar-hide">
               <div className="text-[10px] items-center mb-4 text-[#00ff88] font-black tracking-[0.3em] uppercase flex justify-between px-2">
-                <span>Hub_Central // Exocórtex FRANK</span>
+                <span>Hub_Central // Exocórtex YBY</span>
                 <span>(CTRL+K)</span>
               </div>
               

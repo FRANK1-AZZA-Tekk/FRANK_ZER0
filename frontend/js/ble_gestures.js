@@ -5,7 +5,7 @@ async function connectTWatch() {
     try {
         console.log('Requesting T-Watch S3 Bluetooth Device...');
         const device = await navigator.bluetooth.requestDevice({
-            filters: [{ name: 'FRANK_TWATCH' }],
+            filters: [{ name: 'YBY_TWATCH' }],
             optionalServices: [SERVICE_UUID]
         });
 

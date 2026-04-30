@@ -1,6 +1,6 @@
-# FRANK AI CORTEX 2026 - V26
+# YBY AI CORTEX 2026 - V26
 
-O FRANK é um exocórtex cibernético, uma extensão do corpo, mente e alma do usuário. Ele opera de forma proativa, solucionando problemas antes que ocorram, com foco absoluto em "Function Over Form" (Funcionalidade acima da Forma).
+O YBY é um exocórtex cibernético, uma extensão do corpo, mente e alma do usuário. Ele opera de forma proativa, solucionando problemas antes que ocorram, com foco absoluto em "Function Over Form" (Funcionalidade acima da Forma).
 
 ## Arquitetura V26
 
@@ -11,7 +11,7 @@ A versão V26 introduz a arquitetura de **Agentes Híbridos (Swarm)** e **Zero U
 1. **Backend (FastAPI + LangGraph)**
    - **Roteamento Híbrido:** Utiliza `Gemini 2.5 Flash` para tarefas rápidas e `DeepSeek R1` (via Groq) para raciocínio complexo.
    - **UMEM (Unified Memory Extraction and Management):** Memória Bayesiana para atualização de crenças do sistema.
-   - **Varredura Proativa (5h00):** Job agendado (`node-cron`) que busca otimizações na internet e gera um "Pacote de Melhorias Diárias".
+   - **Protocolo de Nutricao do Solo (5h00):** Job agendado (`node-cron`) que busca otimizações na internet e gera um "Pacote de Melhorias Diárias".
    - **Endpoints:** `/sensors` (telemetria), `/swarm/voice` (comandos), `/stream` (SSE).
 
 2. **Frontend (React + Vite PWA)**
@@ -26,7 +26,7 @@ A versão V26 introduz a arquitetura de **Agentes Híbridos (Swarm)** e **Zero U
 
 4. **Android App (Kotlin + Compose)**
    - **Zero UI / Living Interfaces:** Interação baseada em gestos (Tap para comandos rápidos, Long Press para análises complexas).
-   - **Integração Direta:** Comunicação direta com a API do FRANK.
+   - **Integração Direta:** Comunicação direta com a API do YBY.
 
 ## Como Iniciar
 
@@ -47,7 +47,7 @@ python app.py
 O frontend é servido automaticamente pelo `server.ts` na porta 3000.
 
 ### ESP32
-Compile e faça o upload do sketch `hardware/frank_esp32.ino` usando a IDE do Arduino ou PlatformIO.
+Compile e faça o upload do sketch `hardware/yby_esp32.ino` usando a IDE do Arduino ou PlatformIO.
 
 ### Android
 Abra a pasta `android` no Android Studio e compile o APK.
@@ -59,9 +59,9 @@ Abra a pasta `android` no Android Studio e compile o APK.
 - **Segurança:** Processamento offline sempre que possível (planejado para V27).
 - **Sweet Spot:** Busca constante pelo equilíbrio perfeito entre performance e consumo de bateria.
 
-## 🚀 FRANK-SCAN: Auto-Evolução Cyberpunk
+## 🚀 YBY-SCAN: Auto-Evolução Cyberpunk
 
-O FRANK-SCAN é um sistema de auto-evolução integrado ao FRANK. Ele permite que o assistente busque ativamente por otimizações (no GitHub, fóruns e documentações) e proponha melhorias no próprio código-fonte.
+O YBY-SCAN é um sistema de auto-evolução integrado ao YBY. Ele permite que o assistente busque ativamente por otimizações (no GitHub, fóruns e documentações) e proponha melhorias no próprio código-fonte.
 
 ### Como Funciona (Workflow CrewAI / Gemini):
 1. **ScannerAgent**: Busca por otimizações específicas (ex: "ESP32 battery opt").

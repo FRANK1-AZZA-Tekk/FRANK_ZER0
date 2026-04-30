@@ -52,13 +52,13 @@ export function useDashboardCommands(activeDevice: string) {
         if (!res.ok) throw new Error('API Error');
         
         const data = await res.json();
-        log(`FRANK: ${data.frank_response || 'Error processing'}`);
+        log(`YBY: ${data.yby_response || 'Error processing'}`);
         dispatch(setAgentStatus({ VOICE_AGENT: 'idle' }));
       } catch (e) {
         log('Error: Cortex API unreachable. Simulating offline response...');
         dispatch(setAgentStatus({ VOICE_AGENT: 'error' }));
         setTimeout(() => {
-          log(`FRANK (Offline): I heard "${transcript}", but I am currently disconnected from the main cortex. Processing locally with limited context.`);
+          log(`YBY (Offline): I heard "${transcript}", but I am currently disconnected from the main cortex. Processing locally with limited context.`);
           dispatch(setAgentStatus({ VOICE_AGENT: 'idle' }));
         }, 1000);
       }
@@ -180,8 +180,8 @@ export function useDashboardCommands(activeDevice: string) {
       
       const data = await res.json();
       
-      if (data.frank_response) {
-        dispatch(addLog({ message: data.frank_response, origin: 'SWARM', type: 'success' }));
+      if (data.yby_response) {
+        dispatch(addLog({ message: data.yby_response, origin: 'SWARM', type: 'success' }));
       }
       dispatch(setAgentStatus({ VOICE_AGENT: 'idle' }));
     } catch (err) {
@@ -190,7 +190,7 @@ export function useDashboardCommands(activeDevice: string) {
       
       try {
         const localResponse = await processGeneralCommand(command, "Dashboard context");
-        dispatch(addLog({ message: localResponse, origin: 'FRANK', type: 'info' }));
+        dispatch(addLog({ message: localResponse, origin: 'YBY', type: 'info' }));
       } catch (e) {
         dispatch(addLog({ message: `Comando falhou: ${command}`, origin: 'SYSTEM', type: 'error' }));
       } finally {

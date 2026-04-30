@@ -1,4 +1,4 @@
-package com.frank.wearable
+package com.yby.wearable
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -35,9 +35,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            FrankTheme {
+            YBYTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF0A0A0A)) {
-                    FrankOrbUI()
+                    YBYOrbUI()
                 }
             }
         }
@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun FrankTheme(content: @Composable () -> Unit) {
+fun YBYTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = darkColorScheme(
             primary = Color(0xFF00FF88),
@@ -61,7 +61,7 @@ enum class OrbState {
 }
 
 @Composable
-fun FrankOrbUI() {
+fun YBYOrbUI() {
     var orbState by remember { mutableStateOf(OrbState.READY) }
     var responseText by remember { mutableStateOf("Aguardando comando...") }
     val scope = rememberCoroutineScope()
@@ -118,7 +118,7 @@ fun FrankOrbUI() {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "FRANK CORTEX",
+            text = "YBY CORTEX",
             color = Color(0xFF00FF88),
             fontSize = 24.sp,
             fontWeight = FontWeight.Black,
@@ -145,7 +145,7 @@ fun FrankOrbUI() {
                                 // Simulate transition to processing
                                 kotlinx.coroutines.delay(1000)
                                 orbState = OrbState.PROCESSING
-                                val (text, audioUrl) = sendVoiceCommand("FRANK analise o ambiente", context)
+                                val (text, audioUrl) = sendVoiceCommand("YBY analise o ambiente", context)
                                 responseText = text
                                 audioUrl?.let { playAudio(it) }
                                 orbState = OrbState.READY
@@ -153,11 +153,11 @@ fun FrankOrbUI() {
                         },
                         onTap = {
                             orbState = OrbState.LISTENING
-                            responseText = "Ouvindo Frank..."
+                            responseText = "Ouvindo YBY..."
                             scope.launch {
                                 kotlinx.coroutines.delay(800)
                                 orbState = OrbState.PROCESSING
-                                val (text, audioUrl) = sendVoiceCommand("FRANK oi", context)
+                                val (text, audioUrl) = sendVoiceCommand("YBY oi", context)
                                 responseText = text
                                 audioUrl?.let { playAudio(it) }
                                 orbState = OrbState.READY
@@ -205,9 +205,9 @@ suspend fun sendVoiceCommand(text: String, context: Context): Pair<String, Strin
             }
             
             val responseCode = conn.responseCode
-            val frankResponse = if (responseCode == 200) {
+            val ybyResponse = if (responseCode == 200) {
                 val response = conn.inputStream.bufferedReader().use { it.readText() }
-                JSONObject(response).getString("frank_response")
+                JSONObject(response).getString("yby_response")
             } else {
                 "Erro: $responseCode"
             }
@@ -223,14 +223,14 @@ suspend fun sendVoiceCommand(text: String, context: Context): Pair<String, Strin
                     // ttsConn.setRequestProperty("xi-api-key", "YOUR_API_KEY") // Add API key here if needed
                     ttsConn.doOutput = true
 
-                    val ttsInput = JSONObject().put("text", frankResponse).toString()
+                    val ttsInput = JSONObject().put("text", ybyResponse).toString()
                     ttsConn.outputStream.use { os ->
                         val input = ttsInput.toByteArray(Charsets.UTF_8)
                         os.write(input, 0, input.size)
                     }
 
                     if (ttsConn.responseCode == 200) {
-                        val tempFile = File.createTempFile("frank_voice", ".mp3", context.cacheDir)
+                        val tempFile = File.createTempFile("yby_voice", ".mp3", context.cacheDir)
                         tempFile.outputStream().use { fileOut ->
                             ttsConn.inputStream.copyTo(fileOut)
                         }
@@ -241,7 +241,7 @@ suspend fun sendVoiceCommand(text: String, context: Context): Pair<String, Strin
                 }
             }
 
-            Pair(frankResponse, audioUrl)
+            Pair(ybyResponse, audioUrl)
         } catch (e: Exception) {
             Pair("Falha na conexão: ${e.message}", null)
         }

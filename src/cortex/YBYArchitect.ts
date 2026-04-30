@@ -237,4 +237,4 @@ class ProactiveEngine {
 // ==========================================
 // INICIALIZAÇÃO DO SISTEMA
 // ==========================================
-export const frankCortex = new ProactiveEngine();
+export const ybyCortex = new ProactiveEngine();

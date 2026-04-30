@@ -1,6 +1,6 @@
 substitutions:
-  name: "atoms3r-frank"
-  friendly_name: "Frank AtomS3R"
+  name: "atoms3r-yby"
+  friendly_name: "YBY AtomS3R"
 
 esphome:
   name: ${name}
@@ -23,7 +23,7 @@ wifi:
 mqtt:
   broker: "192.168.43.1" # IP do Xiaomi 12 no Hotspot ou Servidor Local
   port: 1883
-  topic_prefix: frank/atoms3r
+  topic_prefix: yby/atoms3r
   client_id: "atoms3r_core"
 
 # Microfone PDM (Echo Base)
@@ -48,11 +48,11 @@ binary_sensor:
     name: "AtomS3R PTT Button"
     on_press:
       - mqtt.publish:
-          topic: frank/atoms3r/voice_trigger
+          topic: yby/atoms3r/voice_trigger
           payload: "START_LISTENING"
     on_release:
       - mqtt.publish:
-          topic: frank/atoms3r/voice_trigger
+          topic: yby/atoms3r/voice_trigger
           payload: "STOP_LISTENING"
 
 # Feedback Visual (NeoPixel)

@@ -1,5 +1,5 @@
 /**
- * FRANK CORTEX 2026 - Frontend Brain (SOTA)
+ * YBY CORTEX 2026 - Frontend Brain (SOTA)
  * Features: IndexedDB GraphRAG, BLE MTU 512, SW Offline-First
  */
 
@@ -44,7 +44,7 @@ function log(message, type = 'info') {
 }
 
 // --- IndexedDB (GraphRAG Cache) ---
-const dbName = "FRANK_CORTEX_DB";
+const dbName = "YBY_CORTEX_DB";
 const dbVersion = 1;
 let db;
 
@@ -67,9 +67,9 @@ let voiceChar;
 
 bleBtn.onclick = async () => {
     try {
-        log(`Escaneando FRANK_CORTEX_SOTA (MTU Alvo: ${BLE_MTU})...`);
+        log(`Escaneando YBY_CORTEX_SOTA (MTU Alvo: ${BLE_MTU})...`);
         bleDevice = await navigator.bluetooth.requestDevice({
-            filters: [{ name: 'FRANK_CORTEX_SOTA' }],
+            filters: [{ name: 'YBY_CORTEX_SOTA' }],
             optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b']
         });
 
@@ -127,7 +127,7 @@ if (SpeechRecognition) {
             const data = await res.json();
             
             const summary = data.results.summary;
-            log(`FRANK: ${summary}`);
+            log(`YBY: ${summary}`);
             log(`Judge: ${data.results.judge.security}`);
             
             // Cache in IndexedDB
@@ -307,5 +307,5 @@ simulation.on("tick", () => {
         .attr("cy", d => d.y);
 });
 
-log('FRANK CORTEX v3.0.0 SOTA Online.');
+log('YBY CORTEX v3.0.0 SOTA Online.');
 log('Swarm 10 Agents Ready.');

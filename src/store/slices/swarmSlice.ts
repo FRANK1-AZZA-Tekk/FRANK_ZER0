@@ -92,7 +92,7 @@ const initialState: SwarmState = {
   dailyImprovements: null,
   memory: {
     shortTerm: ["Sistema iniciado", "Calibragem neural concluída"],
-    mediumTerm: ["Projeto FRANK v3.5 configurado"],
+    mediumTerm: ["Projeto YBY v3.5 configurado"],
     longTerm: ["Objetivo: Interface homem-máquina perfeita"]
   },
   evolution: {

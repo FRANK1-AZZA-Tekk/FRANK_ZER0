@@ -15,7 +15,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage
 
-app = FastAPI(title="FRANK V26 - EXOCORTEX")
+app = FastAPI(title="YBY V26 - EXOCORTEX")
 
 # Modelos Híbridos (OpenRouter / Groq / Gemini)
 llm_gemini_pro = ChatGoogleGenerativeAI(model="gemini-2.5-pro", temperature=0.1)
@@ -23,7 +23,7 @@ llm_gemini_flash = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=
 llm_groq_deepseek = ChatGroq(model="deepseek-r1-distill-llama-70b", temperature=0.2) 
 
 # UMEM - Memória Bayesiana (Unified Memory Extraction and Management)
-class FrankBayesianState:
+class YBYBayesianState:
     def __init__(self, agent_id: str, prior_beliefs: np.ndarray):
         self.agent_id = agent_id
         self.beliefs = prior_beliefs # P(H)
@@ -34,7 +34,7 @@ class FrankBayesianState:
         self.beliefs = unnormalized_posterior / evidence_normalizer
         return self.beliefs
 
-frank_mem = FrankBayesianState("CORE", np.array([0.33, 0.33, 0.33]))
+yby_mem = YBYBayesianState("CORE", np.array([0.33, 0.33, 0.33]))
 
 # Tool Shim para DeepSeek R1 (Extração de <think>)
 def parse_deepseek_reasoning(response_text: str):
@@ -68,7 +68,7 @@ async def swarm_voice(data: VoiceInput):
         return {"status": "success", "result": {"response": final, "orb_color": "#ff00ff", "reasoning": think}}
     else:
         response = await llm_gemini_flash.ainvoke([
-            SystemMessage(content="Você é o FRANK V26, um exocórtex cibernético. Responda de forma ultra-concisa e direta."),
+            SystemMessage(content="Você é o YBY V26, um exocórtex cibernético. Responda de forma ultra-concisa e direta."),
             HumanMessage(content=data.text)
         ])
         return {"status": "success", "result": {"response": response.content, "orb_color": "#00ff88"}}
@@ -82,7 +82,7 @@ async def sse_generator():
 async def stream():
     return EventSourceResponse(sse_generator())
 
-# Varredura Proativa das 5h00 (Cron Job simulado via endpoint)
+# Protocolo de Nutricao do Solo (Cron Job simulado via endpoint)
 @app.post("/api/trigger-scan")
 async def trigger_scan():
     prompt = "Faça uma varredura na internet sobre as últimas otimizações para ESP32-S3, llama.cpp, quantização GGUF, e performance de React/Vite. Gere um 'Pacote de Melhorias Diárias' em JSON com 3 sugestões de otimização reais."

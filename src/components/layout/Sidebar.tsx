@@ -41,7 +41,7 @@ export function Sidebar() {
           <Cpu size={24} className="text-[#00ff88]" />
         </div>
         <div className="hidden lg:flex flex-col">
-          <span className="text-sm font-black text-white tracking-[0.3em]">FRANK</span>
+          <span className="text-sm font-black text-white tracking-[0.3em]">YBY</span>
           <span className="text-[8px] font-bold text-gray-500 tracking-widest uppercase">Exocortex_v3.5</span>
         </div>
       </div>

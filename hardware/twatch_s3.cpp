@@ -8,7 +8,7 @@ void setup() {
   Serial.begin(115200);
   Wire.begin(18, 19);
   imu.begin(Wire);
-  Serial.println("FRANK GESTURE AGENT: ONLINE");
+  Serial.println("YBY GESTURE AGENT: ONLINE");
 }
 
 void loop() {

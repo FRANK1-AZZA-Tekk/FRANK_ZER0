@@ -6,7 +6,7 @@ from core.vault import vault
 from crew.neo4j_tools import Neo4jMemoryTools
 import os
 
-class FrankSwarm:
+class YBYSwarm:
     def __init__(self, status_callback=None, notify_callback=None):
         self.status_callback = status_callback
         self.notify_callback = notify_callback
@@ -22,7 +22,7 @@ class FrankSwarm:
             from langchain_huggingface import HuggingFacePipeline
 
             if torch.cuda.is_available():
-                print("[FRANK CORTEX] CUDA GPU detected. Initializing local GPU-accelerated LLM...")
+                print("[YBY CORTEX] CUDA GPU detected. Initializing local GPU-accelerated LLM...")
                 model_id = "TinyLlama/TinyLlama-1.1B-Chat-v1.0" # Lightweight model for quick local inference
                 tokenizer = AutoTokenizer.from_pretrained(model_id)
                 model = AutoModelForCausalLM.from_pretrained(
@@ -41,10 +41,10 @@ class FrankSwarm:
                 )
                 return HuggingFacePipeline(pipeline=pipe)
             else:
-                print("[FRANK CORTEX] No CUDA GPU detected. Falling back to Ollama for local inference.")
+                print("[YBY CORTEX] No CUDA GPU detected. Falling back to Ollama for local inference.")
                 return None
         except Exception as e:
-            print(f"[FRANK CORTEX] Failed to initialize local GPU LLM: {e}. Falling back to Ollama.")
+            print(f"[YBY CORTEX] Failed to initialize local GPU LLM: {e}. Falling back to Ollama.")
             return None
 
     def reload_llms(self):
@@ -249,11 +249,11 @@ class FrankSwarm:
                 
                 # Salva na memória de longo prazo
                 memory_id = str(uuid.uuid4())
-                cortex.save_memory(memory_id, f"Usuário: {user_text} | FRANK: {final_output}")
+                cortex.save_memory(memory_id, f"Usuário: {user_text} | YBY: {final_output}")
                 
                 # Dispara MQTT para o T-Watch S3 (Circuit Breaker simples)
                 try:
-                    publish.single("frank/twatch/notify", payload=str(final_output), hostname="localhost", port=1883)
+                    publish.single("yby/twatch/notify", payload=str(final_output), hostname="localhost", port=1883)
                 except Exception as mqtt_err:
                     print(f"[OWASP ASI] MQTT Broker indisponível: {mqtt_err}")
                     
@@ -338,7 +338,7 @@ class FrankSwarm:
             client = genai.Client(api_key=vault.GEMINI_API_KEY)
             
             system_instruction = """
-            Você é o Especialista em Visão do FRANK CORTEX 2026. 
+            Você é o Especialista em Visão do YBY CORTEX 2026. 
             Sua tarefa é analisar a imagem do feed óptico do usuário com precisão absoluta.
             
             Extraia:

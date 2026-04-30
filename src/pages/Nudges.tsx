@@ -15,8 +15,8 @@ interface Nudge {
 const MOCK_NUDGES: Nudge[] = [
   { id: 'n1', title: 'Posture Check', message: 'You have been sitting for 2 hours. Stand up and stretch.', category: 'health', time: '10:30 AM', status: 'active', device: 'watch' },
   { id: 'n2', title: 'Focus Block', message: 'Deep work session starting in 5 mins. Muting non-essential alerts.', category: 'productivity', time: '11:00 AM', status: 'active', device: 'phone' },
-  { id: 'n3', title: 'Network Anomaly', message: 'Unrecognized device attempting BLE pairing. Blocked.', category: 'security', time: '09:15 AM', status: 'completed', device: 'atom' },
-  { id: 'n4', title: 'Battery Optimization', message: 'T-Watch S3 battery at 20%. Switching to low power mode.', category: 'system', time: '08:45 AM', status: 'completed', device: 'watch' },
+  { id: 'n3', title: 'Network Anomaly', message: 'Unrecognized device attempting BLE pairing. Blocked.', category: 'security', time: '09:105:00 AM', status: 'completed', device: 'atom' },
+  { id: 'n4', title: 'Battery Optimization', message: 'T-Watch S3 battery at 20%. Switching to low power mode.', category: 'system', time: '08:405:00 AM', status: 'completed', device: 'watch' },
 ];
 
 export default function Nudges() {
@@ -188,7 +188,7 @@ export default function Nudges() {
             <div className="bg-[#ff00ff]/5 rounded-[2rem] border border-[#ff00ff]/20 p-8 flex flex-col gap-4">
               <h3 className="text-[10px] font-black text-[#ff00ff] tracking-[0.2em] uppercase mb-2">CONTEXT_AWARENESS</h3>
               <p className="text-xs text-gray-400 font-mono leading-relaxed">
-                Frank is currently monitoring your biometric data via T-Watch S3 and environmental context via AtomS3R to deliver timely, non-intrusive nudges.
+                YBY is currently monitoring your biometric data via T-Watch S3 and environmental context via AtomS3R to deliver timely, non-intrusive nudges.
               </p>
             </div>
           </div>

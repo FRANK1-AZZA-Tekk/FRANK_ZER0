@@ -12,7 +12,7 @@ class CortexMemory:
 
         try:
             self.client = chromadb.HttpClient(host=host, port=port)
-            self.collection = self.client.get_or_create_collection(name="frank_knowledge_base")
+            self.collection = self.client.get_or_create_collection(name="yby_knowledge_base")
             print("[SISTEMA] Conectado à Memória Vetorial com sucesso.")
         except Exception as e:
             print(f"[AVISO] Falha ao conectar no ChromaDB. Rodando sem memória de longo prazo. Erro: {e}")

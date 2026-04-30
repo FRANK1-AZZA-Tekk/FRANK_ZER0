@@ -8,7 +8,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 from routers import llm_router, health, voice
 from core.config import settings
-from core.swarm import frank_swarm
+from core.swarm import yby_swarm
 import sentry_sdk
 from prometheus_client import make_asgi_app, Counter, Histogram
 import time
@@ -18,8 +18,8 @@ import base64
 from PIL import Image
 
 # --- Monitoring ---
-REQUEST_COUNT = Counter("frank_requests_total", "Total requests", ["method", "endpoint", "http_status"])
-REQUEST_LATENCY = Histogram("frank_request_latency_seconds", "Request latency", ["endpoint"])
+REQUEST_COUNT = Counter("yby_requests_total", "Total requests", ["method", "endpoint", "http_status"])
+REQUEST_LATENCY = Histogram("yby_request_latency_seconds", "Request latency", ["endpoint"])
 
 # --- WebSocket Manager ---
 class ConnectionManager:
@@ -53,16 +53,16 @@ if settings.APP_ENV == "production":
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Lifespan async para inicialização e limpeza."""
-    logging.info("[FRANK CORTEX] Inicializando Córtex Neural 2026...")
+    logging.info("[YBY CORTEX] Inicializando Córtex Neural 2026...")
     # Inicialização de DB, Redis Sentinel, Neo4j, etc.
     # if settings.APP_ENV == "production":
     #     await init_redis_sentinel()
     #     await init_neo4j()
     yield
-    logging.info("[FRANK CORTEX] Desligando Córtex Neural...")
+    logging.info("[YBY CORTEX] Desligando Córtex Neural...")
 
 app = FastAPI(
-    title="FRANK AI CORTEX 2026",
+    title="YBY AI CORTEX 2026",
     version="2026.3.0",
     lifespan=lifespan,
     docs_url="/api/v1/docs",
@@ -110,7 +110,7 @@ async def run_swarm(request: dict):
         raise HTTPException(status_code=400, detail="Prompt missing")
     
     try:
-        result = await frank_swarm.run(prompt)
+        result = await yby_swarm.run(prompt)
         return result
     except Exception as e:
         logging.error(f"Swarm Error: {str(e)}")
@@ -178,7 +178,7 @@ async def run_vision_swarm(request: dict):
         # 3. Process with Swarm
         await log_step("Sending to Vision Agent (Gemini 1.5 Flash)")
         processed_b64 = base64.b64encode(image_data).decode('utf-8')
-        result = await run_in_threadpool(frank_swarm.process_vision_pipeline, processed_b64)
+        result = await run_in_threadpool(yby_swarm.process_vision_pipeline, processed_b64)
         
         await log_step("Analysis complete")
         
@@ -213,7 +213,7 @@ async def run_memory_swarm(request: dict):
     
     try:
         # Executa o nó de memória do enxame
-        result = await run_in_threadpool(frank_swarm.process_memory_pipeline, query)
+        result = await run_in_threadpool(yby_swarm.process_memory_pipeline, query)
         return {"context": str(result), "status": "success"}
     except Exception as e:
         logging.error(f"Memory Swarm Error: {str(e)}")
@@ -229,8 +229,8 @@ async def run_voice_swarm(request: dict):
         raise HTTPException(status_code=400, detail="Audio text missing")
     
     try:
-        result = await run_in_threadpool(frank_swarm.process_voice_pipeline, audio_text)
-        return {"frank_response": str(result), "status": "success"}
+        result = await run_in_threadpool(yby_swarm.process_voice_pipeline, audio_text)
+        return {"yby_response": str(result), "status": "success"}
     except Exception as e:
         logging.error(f"Voice Swarm Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -241,7 +241,7 @@ async def run_research_swarm(request: dict):
     if not query:
         raise HTTPException(status_code=400, detail="Query missing")
     try:
-        result = await run_in_threadpool(frank_swarm.research, query)
+        result = await run_in_threadpool(yby_swarm.research, query)
         return {"result": str(result), "status": "success"}
     except Exception as e:
         logging.error(f"Research Swarm Error: {str(e)}")
@@ -313,7 +313,7 @@ if os.path.exists(frontend_path):
 async def status():
     return {
         "status": "online", 
-        "system": "FRANK_CORTEX_2026", 
+        "system": "YBY_CORTEX_2026", 
         "version": "3.0.0",
         "env": settings.APP_ENV,
         "workers": settings.GUNICORN_WORKERS

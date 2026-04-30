@@ -48,7 +48,7 @@ import { VisionAnalysis } from '../components/Dashboard/VisionAnalysis';
 import { MemoryCortex } from '../components/Dashboard/MemoryCortex';
 import { AnalyticsDashboard } from '../components/Dashboard/AnalyticsDashboard';
 import { DailyImprovementsModal } from '../components/Dashboard/DailyImprovementsModal';
-import { FRANKScanModal } from '../components/Dashboard/FRANKScanModal';
+import { YBYScanModal } from '../components/Dashboard/YBYScanModal';
 import { AgentIconSettingsModal } from '../components/Dashboard/AgentIconSettingsModal';
 import { CommandHub } from '../components/CommandHub';
 import { WebGLCanvasBoundary } from '../components/WebGLCanvasBoundary';
@@ -68,7 +68,7 @@ export default function Dashboard() {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   
   const [isScanningEvolve, setIsScanningEvolve] = useState(false);
-  const [frankScanResult, setFrankScanResult] = useState<{ id: string, report: string, diff: string } | null>(null);
+  const [ybyScanResult, setYBYScanResult] = useState<{ id: string, report: string, diff: string } | null>(null);
 
   const [editingAgent, setEditingAgent] = useState<string | null>(null);
   const [isCommandHubOpen, setIsCommandHubOpen] = useState(false);
@@ -133,7 +133,7 @@ export default function Dashboard() {
 
   const handleEvolveClick = async () => {
     setIsScanningEvolve(true);
-    log('[FRANK-SCAN] Ativando ScannerAgent para busca de otimizações...');
+    log('[YBY-SCAN] Ativando ScannerAgent para busca de otimizações...');
     try {
       const res = await fetch(`${getApiUrl()}/api/v1/scan`, {
         method: 'POST',
@@ -143,22 +143,22 @@ export default function Dashboard() {
       
       const data = await res.json();
       if (res.ok && data.id) {
-        log(`[FRANK-SCAN] Análise concluída. ID: ${data.id}`);
+        log(`[YBY-SCAN] Análise concluída. ID: ${data.id}`);
         const reportRes = await fetch(`${getApiUrl()}/api/v1/report/${data.id}`);
         const reportData = await reportRes.json();
         
         if (reportRes.ok) {
-           setFrankScanResult({
+           setYBYScanResult({
              id: data.id,
              report: reportData.report,
              diff: reportData.diff
            });
         }
       } else {
-        log('[FRANK-SCAN] Erro na varredura.');
+        log('[YBY-SCAN] Erro na varredura.');
       }
     } catch (e) {
-      log('[FRANK-SCAN] Erro de rede na varredura.');
+      log('[YBY-SCAN] Erro de rede na varredura.');
     } finally {
       setIsScanningEvolve(false);
     }
@@ -310,7 +310,7 @@ export default function Dashboard() {
                 </div>
                 <div className="h-10 w-[2px] bg-gradient-to-b from-[#00ff88]/40 to-transparent"></div>
                 <div>
-                    <h1 className="text-3xl md:text-5xl lg:text-7xl font-black text-white tracking-tighter italic font-serif">FRANK<span className="text-[#00ff88]">_</span>CORTEX</h1>
+                    <h1 className="text-3xl md:text-5xl lg:text-7xl font-black text-white tracking-tighter italic font-serif">YBY<span className="text-[#00ff88]">_</span>CORTEX</h1>
                     <p className="text-[8px] md:text-[10px] font-mono font-bold text-gray-500 tracking-[0.4em] md:tracking-[0.6em] uppercase mt-1">Experimental_Neural_Mesh_v3.5</p>
                 </div>
               </motion.div>
@@ -579,13 +579,13 @@ export default function Dashboard() {
         {dailyImprovements && (
           <DailyImprovementsModal key="daily-improvements-modal" improvements={dailyImprovements} />
         )}
-        {frankScanResult && (
-          <FRANKScanModal 
-            key="frank-scan-modal"
-            scanId={frankScanResult.id} 
-            report={frankScanResult.report} 
-            diff={frankScanResult.diff} 
-            onClose={() => setFrankScanResult(null)} 
+        {ybyScanResult && (
+          <YBYScanModal 
+            key="yby-scan-modal"
+            scanId={ybyScanResult.id} 
+            report={ybyScanResult.report} 
+            diff={ybyScanResult.diff} 
+            onClose={() => setYBYScanResult(null)} 
             onApprove={handleApproveMerge} 
           />
         )}

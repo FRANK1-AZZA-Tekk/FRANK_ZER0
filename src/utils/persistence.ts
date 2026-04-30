@@ -1,6 +1,6 @@
 import { openDB, IDBPDatabase } from 'idb';
 
-const DB_NAME = 'frank-cortex-db';
+const DB_NAME = 'yby-cortex-db';
 const STORE_NAME = 'ia-responses';
 const VERSION = 1;
 

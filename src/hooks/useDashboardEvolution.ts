@@ -14,13 +14,13 @@ export function useDashboardEvolution() {
 
   useEffect(() => {
     let cancelled = false;
-    const hasSeenImprovements = sessionStorage.getItem('frank_seen_improvements');
+    const hasSeenImprovements = sessionStorage.getItem('yby_seen_improvements');
     const lastSweep = evolution ? new Date(evolution.lastSweep) : new Date();
     const now = new Date();
     const shouldSweep = now.getHours() === 5 && now.getDate() !== lastSweep.getDate();
 
     if (!hasSeenImprovements || shouldSweep) {
-      sessionStorage.setItem('frank_seen_improvements', 'true');
+      sessionStorage.setItem('yby_seen_improvements', 'true');
 
       const fetchOptimizations = async () => {
         try {
@@ -38,7 +38,7 @@ export function useDashboardEvolution() {
               category: 'optimization' as const
             }))
           }));
-          log("[SYSTEM] Varredura das 5 AM completa. Novas melhorias disponíveis.");
+          log("[SYSTEM] Varredura das 05:00 AM completa. Novas melhorias disponíveis.");
         } catch (e) {
           console.error("Failed to fetch daily improvements", e);
         }

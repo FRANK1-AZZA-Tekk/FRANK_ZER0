@@ -1,4 +1,4 @@
-# 🏗️ FRANK_ARCHITECT v1.0 - BLUEPRINT 2026
+# 🏗️ YBY_ARCHITECT v1.0 - BLUEPRINT 2026
 
 ## 1. DIAGRAMA ARQUITETURAL (4 CAMADAS)
 
@@ -59,7 +59,7 @@ graph TD
 *   **Golden Sets:** 50 cenários de desperdício de infraestrutura.
 *   **KPIs:** Redução de Capex/Opex em 20%, Zero downtime induzido.
 
-### Skill 4: Code Evolution (FRANK-SCAN)
+### Skill 4: Code Evolution (YBY-SCAN)
 *   **Objetivo:** Auto-melhoria contínua do próprio código baseada em tendências do GitHub/Fóruns.
 *   **Prompts:** "Analise o diff {diff} para o arquivo {file}. Verifique se há vazamento de memória ou regressão de latência. Aprove ou rejeite com justificativa."
 *   **Exemplos:** Otimização de loop React, Correção de memory leak no WebSocket.

@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frank-cortex-backend
+  name: yby-cortex-backend
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: frank-cortex
+      app: yby-cortex
   template:
     metadata:
       labels:
-        app: frank-cortex
+        app: yby-cortex
     spec:
       containers:
       - name: backend
-        image: frank-cortex-backend:latest
+        image: yby-cortex-backend:latest
         ports:
         - containerPort: 3000
         env:
@@ -45,10 +45,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: frank-cortex-service
+  name: yby-cortex-service
 spec:
   selector:
-    app: frank-cortex
+    app: yby-cortex
   ports:
     - protocol: TCP
       port: 80

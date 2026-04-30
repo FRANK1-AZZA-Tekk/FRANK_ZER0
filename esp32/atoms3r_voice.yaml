@@ -9,7 +9,7 @@ wifi:
 
 mqtt:
   broker: "192.168.1.100"
-  topic_prefix: frank/atoms3r
+  topic_prefix: yby/atoms3r
 
 i2s_audio:
   - id: i2s_in

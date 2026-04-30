@@ -47,20 +47,20 @@ export default defineConfig(({mode}) => {
           ]
         },
         manifest: {
-          name: 'FRANK CORTEX',
-          short_name: 'FRANK',
+          name: 'YBY CORTEX',
+          short_name: 'YBY',
           description: 'Cyberpunk Wearable AI OS',
           theme_color: '#000000',
           background_color: '#000000',
           display: 'standalone',
           icons: [
             {
-              src: 'https://picsum.photos/seed/frank192/192/192',
+              src: 'https://picsum.photos/seed/yby192/192/192',
               sizes: '192x192',
               type: 'image/png'
             },
             {
-              src: 'https://picsum.photos/seed/frank512/512/512',
+              src: 'https://picsum.photos/seed/yby512/512/512',
               sizes: '512x512',
               type: 'image/png'
             }

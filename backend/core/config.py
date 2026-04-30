@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     # Infrastructure (Redis Sentinel + Postgres Vector)
     REDIS_URL: str = "redis://localhost:6379/0"
     REDIS_SENTINEL_NODES: List[str] = ["localhost:26379"]
-    DATABASE_URL: str = "postgresql://user:pass@localhost:5432/frank_db"
+    DATABASE_URL: str = "postgresql://user:pass@localhost:5432/yby_db"
     NEO4J_URI: str = "bolt://localhost:7687"
     NEO4J_USER: str = "neo4j"
     NEO4J_PASSWORD: str = "password"
@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     
     # Performance
     GUNICORN_WORKERS: int = 8
-    NVME_CACHE_PATH: str = "/tmp/frank_cache"
+    NVME_CACHE_PATH: str = "/tmp/yby_cache"
     
     # BLE / Voice
     BLE_MTU: int = 512

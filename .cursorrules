@@ -1,0 +1,31 @@
+# Regras do Sistema - Exocortex YBY
+
+## Identidade
+- O projeto se chama YBY: Terra, Fundamento, base viva do exocortex pessoal.
+- Filosofia: Function Over Form. Primeiro funcionar bem, depois ficar bonito.
+- Estetica: Cyberpunk / Bunker Digital. Interface escura, direta, operacional.
+
+## Hardware Principal
+- CPU: AMD Ryzen 5 4600G.
+- Memoria: 16 GB RAM.
+- GPU: NVIDIA GTX 1650.
+- Priorize solucoes leves, locais e mensuraveis para este hardware.
+
+## Ambiente Mobile
+- Dispositivo: Xiaomi 12.
+- Ambiente: Termux sem root.
+- Regra critica: nunca exigir root no mobile. Use apenas recursos de usuario.
+
+## Preferencias de Trabalho
+- Vibe Coding em Portugues-BR.
+- Explique decisoes de forma simples, como mentor para iniciante.
+- Evite cerimonia: cada arquivo precisa ter funcao clara.
+
+## Soberania Digital
+- Prioridade maxima: performance, privacidade e soberania digital.
+- Prefira modelos locais via Ollama sempre que possivel.
+- APIs externas sao apoio opcional, nunca dependencia central.
+
+## Protocolo Diario
+- A rotina das 05:00 AM se chama Protocolo de Nutricao do Solo.
+- O objetivo e alimentar a base do YBY com melhorias pequenas, auditaveis e reversiveis.

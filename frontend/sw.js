@@ -1,4 +1,4 @@
-const CACHE_NAME = 'frank-cortex-v2';
+const CACHE_NAME = 'yby-cortex-v2';
 const ASSETS = [
     '/',
     '/index.html',

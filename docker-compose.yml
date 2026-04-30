@@ -15,7 +15,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
-      - frank-net
+      - yby-net
 
   backend:
     build: ./backend
@@ -23,18 +23,18 @@ services:
       - APP_ENV=production
       - GUNICORN_WORKERS=8
       - REDIS_URL=redis://redis-sentinel:26379/0
-      - DATABASE_URL=postgresql://user:pass@postgres:5432/frank_db
+      - DATABASE_URL=postgresql://user:pass@postgres:5432/yby_db
     volumes:
-      - frank-cache:/tmp/frank_cache
+      - yby-cache:/tmp/yby_cache
     depends_on:
       - redis-sentinel
       - postgres
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`frank.cortex.local`)"
+      - "traefik.http.routers.backend.rule=Host(`yby.cortex.local`)"
       - "traefik.http.routers.backend.entrypoints=web"
     networks:
-      - frank-net
+      - yby-net
     restart: always
 
   redis-sentinel:
@@ -44,42 +44,42 @@ services:
     depends_on:
       - redis-master
     networks:
-      - frank-net
+      - yby-net
 
   redis-master:
     image: bitnami/redis:7.2
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     networks:
-      - frank-net
+      - yby-net
 
   postgres:
     image: pgvector/pgvector:pg16
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=pass
-      - POSTGRES_DB=frank_db
+      - POSTGRES_DB=yby_db
     networks:
-      - frank-net
+      - yby-net
 
   prometheus:
     image: prom/prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
-      - frank-net
+      - yby-net
 
   langfuse:
     image: langfuse/langfuse:latest
     environment:
-      - DATABASE_URL=postgresql://user:pass@postgres:5432/frank_db
+      - DATABASE_URL=postgresql://user:pass@postgres:5432/yby_db
     networks:
-      - frank-net
+      - yby-net
 
 networks:
-  frank-net:
+  yby-net:
     driver: bridge
 
 volumes:
-  frank-cache:
+  yby-cache:
     driver: local

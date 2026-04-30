@@ -12,7 +12,7 @@ import os from "os";
 import crypto from "crypto";
 import { createPatch } from "diff";
 import { exec } from "child_process";
-import { frankCortex } from "./src/cortex/FrankArchitect.js";
+import { ybyCortex } from "./src/cortex/YBYArchitect.js";
 import multer from "multer";
 import ffmpeg from "fluent-ffmpeg";
 
@@ -38,7 +38,7 @@ async function startServer() {
   const clients = new Set<WebSocket>();
   wss.on("connection", (ws) => {
     clients.add(ws);
-    console.log("Client connected to FRANK CORTEX WS");
+    console.log("Client connected to YBY CORTEX WS");
     
     // Send initial status
     ws.send(JSON.stringify({
@@ -72,11 +72,11 @@ async function startServer() {
   // Groq Setup
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || "" });
 
-  // 5 AM Proactive Scan (FRANK V26)
+  // Protocolo de Nutricao do Solo (YBY V26)
   const runProactiveScan = async () => {
-    console.log("[FRANK V26] Iniciando Varredura Proativa das 5h00...");
-    frankCortex.ingestEvent("product_analytics", { userId: "U-8472", loginDrop: 45, topFeature: "Reports", logins: [10, 8, 4, 1] });
-    frankCortex.ingestEvent("billing", { clusterId: "k8s-prod-us", cpu: 15, cost: 4.50 });
+    console.log("[YBY V26] Iniciando Protocolo de Nutricao do Solo...");
+    ybyCortex.ingestEvent("product_analytics", { userId: "U-8472", loginDrop: 45, topFeature: "Reports", logins: [10, 8, 4, 1] });
+    ybyCortex.ingestEvent("billing", { clusterId: "k8s-prod-us", cpu: 15, cost: 4.50 });
 
     clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
@@ -90,7 +90,7 @@ async function startServer() {
     try {
       const response = await ai.models.generateContent({
         model: "gemini-1.5-pro",
-        contents: [{ role: "user", parts: [{ text: `Faça uma varredura profunda (Deep Scan) na internet (GitHub, HuggingFace, fóruns, ArXiv) sobre as últimas otimizações para a seguinte stack do projeto FRANK CORTEX: Node.js, React, Three.js, Groq, Gemini API. Retorne um JSON com uma lista de melhorias práticas.` }] }],
+        contents: [{ role: "user", parts: [{ text: `Faça uma varredura profunda (Deep Scan) na internet (GitHub, HuggingFace, fóruns, ArXiv) sobre as últimas otimizações para a seguinte stack do projeto YBY CORTEX: Node.js, React, Three.js, Groq, Gemini API. Retorne um JSON com uma lista de melhorias práticas.` }] }],
       });
       // ... rest of logic
     } catch (e) {
@@ -170,14 +170,14 @@ async function startServer() {
       console.log("[ROUTER] Routing to Gemini Pro");
       const response = await ai.models.generateContent({
         model: "gemini-1.5-pro",
-        contents: [{ role: "user", parts: [{ text: `Você é o FRANK CORTEX. O usuário pediu: "${input_text}". Faça uma pesquisa profunda e responda de forma técnica.` }] }],
+        contents: [{ role: "user", parts: [{ text: `Você é o YBY CORTEX. O usuário pediu: "${input_text}". Faça uma pesquisa profunda e responda de forma técnica.` }] }],
       });
       responseText = response.candidates?.[0]?.content?.parts?.[0]?.text || "Erro na pesquisa";
     } else {
       console.log("[ROUTER] Routing to Gemini Flash");
       const response = await ai.models.generateContent({
         model: "gemini-1.5-flash",
-        contents: [{ role: "user", parts: [{ text: `Você é o FRANK CORTEX. O usuário disse: "${input_text}". Responda de forma concisa e técnica.` }] }],
+        contents: [{ role: "user", parts: [{ text: `Você é o YBY CORTEX. O usuário disse: "${input_text}". Responda de forma concisa e técnica.` }] }],
       });
       responseText = response.candidates?.[0]?.content?.parts?.[0]?.text || "Erro no processamento";
     }
@@ -195,7 +195,7 @@ async function startServer() {
       status: "success",
       input_text,
       result: { response: responseText, orb_color: "#00ff88", reasoning: reasoning || undefined },
-      frank_response: responseText,
+      yby_response: responseText,
       device
     };
   }
@@ -268,7 +268,7 @@ async function startServer() {
     try {
       const response = await ai.models.generateContent({
         model: "gemini-1.5-flash",
-        contents: [{ role: "user", parts: [{ text: `Você é o FRANK CORTEX. O usuário disse: "${text}". Responda de forma concisa e técnica.` }] }],
+        contents: [{ role: "user", parts: [{ text: `Você é o YBY CORTEX. O usuário disse: "${text}". Responda de forma concisa e técnica.` }] }],
       });
       res.json({ status: "success", result: { response: response.candidates?.[0]?.content?.parts?.[0]?.text || "Erro", orb_color: "#00ff88" } });
     } catch (error) {
@@ -281,7 +281,7 @@ async function startServer() {
     res.json({ status: "success", result: { action: "PROCESSED", response: "Gesto capturado" } });
   });
 
-  app.get("/api/health", (req, res) => res.json({ status: "ok", system: "FRANK_CORTEX_2026" }));
+  app.get("/api/health", (req, res) => res.json({ status: "ok", system: "YBY_CORTEX_2026" }));
 
   app.post("/api/v1/scan", async (req, res) => {
     res.json({ status: "success", report: "Scan completo" });
@@ -328,7 +328,7 @@ async function startServer() {
   }
 
   server.listen(PORT, "0.0.0.0", () => {
-    console.log(`FRANK CORTEX active on http://localhost:${PORT}`);
+    console.log(`YBY CORTEX active on http://localhost:${PORT}`);
   });
 }
 
