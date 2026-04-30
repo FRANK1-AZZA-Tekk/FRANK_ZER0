@@ -8,6 +8,7 @@ export const useWebSocket = () => {
   const ws = useRef<WebSocket | null>(null);
   const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
   const retryCount = useRef(0);
+  const shouldReconnect = useRef(true);
   const maxRetries = 10;
 
   const connect = useCallback(() => {
@@ -48,7 +49,7 @@ export const useWebSocket = () => {
       console.log('WebSocket Disconnected', event.reason);
       dispatch(setWsStatus('disconnected'));
       
-      if (!event.wasClean) {
+      if (shouldReconnect.current && retryCount.current < maxRetries) {
         const delay = Math.min(1000 * Math.pow(2, retryCount.current), 30000); // Exponential backoff
         dispatch(addLog({ message: `Conexão perdida. Tentando reconexão em ${delay/1000}s...`, origin: 'SYSTEM', type: 'warning' }));
         
@@ -68,8 +69,10 @@ export const useWebSocket = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    shouldReconnect.current = true;
     connect();
     return () => {
+      shouldReconnect.current = false;
       if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current);
       if (ws.current) {
         ws.current.onclose = null; // Prevent reconnect on unmount

@@ -8,6 +8,7 @@ e garante que o diario de evolucao exista.
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import os
 from pathlib import Path
 from urllib.error import URLError, HTTPError
 from urllib.request import urlopen
@@ -16,7 +17,8 @@ import psutil
 
 ROOT = Path(__file__).resolve().parents[1]
 LOG_PATH = ROOT / "logs" / "evolution.md"
-OLLAMA_URL = "http://127.0.0.1:11434/api/tags"
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434").rstrip("/")
+OLLAMA_URL = f"{OLLAMA_HOST}/api/tags"
 
 BANNER = r"""
 __   __  ______   __   __
@@ -55,7 +57,7 @@ def check_ollama() -> tuple[bool, str]:
 
 
 def read_resources() -> tuple[float, float]:
-    cpu_percent = psutil.cpu_percent(interval=1)
+    cpu_percent = psutil.cpu_percent(interval=0.2)
     ram_percent = psutil.virtual_memory().percent
     return cpu_percent, ram_percent
 

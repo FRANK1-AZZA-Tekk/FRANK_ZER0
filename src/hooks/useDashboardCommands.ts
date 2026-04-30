@@ -4,6 +4,8 @@ import { addLog, setAgentStatus, setVisionResult, setProcessingVision, setLastEr
 import { getApiUrl } from '../utils/api';
 import { processGeneralCommand, processVision } from '../utils/gemini';
 
+const getYbyResponse = (data: any) => data?.yby_response || data?.result?.response || data?.result || '';
+
 export function useDashboardCommands(activeDevice: string) {
   const dispatch = useDispatch();
   const [isListening, setIsListening] = useState(false);
@@ -46,13 +48,13 @@ export function useDashboardCommands(activeDevice: string) {
         const res = await fetch(`${getApiUrl()}/api/v1/swarm/voice`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ audio_text: transcript, device: activeDevice === 'watch' ? "t-watch-s3" : "m5stack-atom" })
+          body: JSON.stringify({ text: transcript, device: activeDevice === 'watch' ? "t-watch-s3" : "m5stack-atom" })
         });
         
         if (!res.ok) throw new Error('API Error');
         
         const data = await res.json();
-        log(`YBY: ${data.yby_response || 'Error processing'}`);
+        log(`YBY: ${getYbyResponse(data) || 'Comando recebido sem resposta textual.'}`);
         dispatch(setAgentStatus({ VOICE_AGENT: 'idle' }));
       } catch (e) {
         log('Error: Cortex API unreachable. Simulating offline response...');
@@ -173,15 +175,16 @@ export function useDashboardCommands(activeDevice: string) {
       const res = await fetch(`${getApiUrl()}/api/v1/swarm/voice`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ audio_text: command })
+        body: JSON.stringify({ text: command })
       });
       
       if (!res.ok) throw new Error('API Error');
       
       const data = await res.json();
+      const responseText = getYbyResponse(data);
       
-      if (data.yby_response) {
-        dispatch(addLog({ message: data.yby_response, origin: 'SWARM', type: 'success' }));
+      if (responseText) {
+        dispatch(addLog({ message: responseText, origin: 'SWARM', type: 'success' }));
       }
       dispatch(setAgentStatus({ VOICE_AGENT: 'idle' }));
     } catch (err) {

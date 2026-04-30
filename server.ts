@@ -102,8 +102,22 @@ async function startServer() {
 
   // API Routes
   app.post("/api/v1/swarm/vision", async (req, res) => {
+    const buildLocalVisionResult = (base64Data: string) => {
+      const bytes = Buffer.byteLength(base64Data, "base64");
+      const analysis = `YBY_VISION_LOCAL: imagem recebida (${bytes} bytes). Gemini indisponivel; mantendo analise soberana basica sem envio externo.`;
+      return {
+        analysis,
+        result: analysis,
+        objects: [],
+        ocr: "",
+        ocr_language: "pt-BR",
+        confidence: 0.5,
+        provider: "local-fallback"
+      };
+    };
+
     try {
-      const { image } = req.body;
+      const image = req.body.image || req.body.image_base64;
       if (!image) return res.status(400).json({ detail: "No image provided" });
 
       // Detect mime type and clean base64 if present
@@ -114,6 +128,10 @@ async function startServer() {
         const match = parts[0].match(/data:(.*?);base64/);
         if (match) mimeType = match[1];
         base64Data = parts[parts.length - 1];
+      }
+
+      if (!process.env.GEMINI_API_KEY) {
+        return res.json(buildLocalVisionResult(base64Data));
       }
 
       const prompt = "Analise esta imagem em detalhes. Identifique objetos, textos e o contexto geral. Seja extremamente técnico e preciso como um agente de IA de elite. Retorne apenas o resultado da análise.";
@@ -146,7 +164,9 @@ async function startServer() {
       });
     } catch (error) {
       console.error("Vision Error:", error);
-      res.status(500).json({ detail: "Internal server error" });
+      const image = req.body.image || req.body.image_base64 || "";
+      const base64Data = typeof image === "string" && image.includes(",") ? image.split(",").pop() || "" : image;
+      res.json(buildLocalVisionResult(base64Data));
     }
   });
 
@@ -263,14 +283,33 @@ async function startServer() {
   });
 
   app.post("/api/v1/swarm/voice", async (req, res) => {
-    const { text, device } = req.body;
-    console.log(`[VOICE_AGENT] Received Text: ${text}`);
+    const inputText = String(req.body.text || req.body.audio_text || req.body.audio || "").trim();
+    const device = req.body.device || "web-client";
+    console.log(`[VOICE_AGENT] Received Text from ${device}: ${inputText}`);
+    if (!inputText) return res.status(400).json({ error: "No text provided" });
+
     try {
+      if (!process.env.GEMINI_API_KEY) {
+        const fallback = `YBY_LOCAL: comando recebido em modo soberano local: "${inputText}"`;
+        return res.json({
+          status: "success",
+          yby_response: fallback,
+          result: { response: fallback, orb_color: "#00ff88" },
+          device
+        });
+      }
+
       const response = await ai.models.generateContent({
         model: "gemini-1.5-flash",
-        contents: [{ role: "user", parts: [{ text: `Você é o YBY CORTEX. O usuário disse: "${text}". Responda de forma concisa e técnica.` }] }],
+        contents: [{ role: "user", parts: [{ text: `Você é o YBY CORTEX. O usuário disse: "${inputText}". Responda de forma concisa e técnica.` }] }],
       });
-      res.json({ status: "success", result: { response: response.candidates?.[0]?.content?.parts?.[0]?.text || "Erro", orb_color: "#00ff88" } });
+      const responseText = response.candidates?.[0]?.content?.parts?.[0]?.text || "Erro";
+      res.json({
+        status: "success",
+        yby_response: responseText,
+        result: { response: responseText, orb_color: "#00ff88" },
+        device
+      });
     } catch (error) {
       res.status(500).json({ error: "failed" });
     }

@@ -99,8 +99,8 @@ export function GlobalVoiceCommand() {
           const res = await fetch(`${getApiUrl()}/api/v1/swarm/vision`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-              image_base64: base64data,
+            body: JSON.stringify({
+              image: base64data,
               task: "Describe objects and perform OCR"
             })
           });
@@ -219,10 +219,12 @@ export function GlobalVoiceCommand() {
       if (!res.ok) throw new Error('API Error');
       
       const data = await res.json();
-      setTranscript(data.transcript || 'Áudio transcrito');
+      const ybyResponse = data.yby_response || data.result?.response || 'Comando processado com sucesso.';
+      const transcript = data.transcript || data.input_text || 'Áudio transcrito';
+      setTranscript(transcript);
       
       // Hook: if transcription commands vision analysis
-      const lowerText = (data.transcript || '').toLowerCase();
+      const lowerText = transcript.toLowerCase();
       const visionKeywords = [
         'analisar imagem', 
         'abrir câmera', 
@@ -237,11 +239,11 @@ export function GlobalVoiceCommand() {
         setResponse('YBY_VISION: Ativando sensores ópticos. Aguardando captura...');
         handleCameraClick();
       } else {
-        setResponse(data.yby_response || 'Comando processado com sucesso.');
+        setResponse(ybyResponse);
       }
       
       dispatch(addLog({
-        message: `${data.yby_response || 'Comando interceptado.'}`,
+        message: ybyResponse,
         origin: 'YBY',
         type: 'success'
       }));
@@ -253,7 +255,7 @@ export function GlobalVoiceCommand() {
       dispatch(setAgentStatus({ VOICE_AGENT: 'idle' }));
       
       // Handle navigation based on transcript
-      handleNavigation(data.transcript || '');
+      handleNavigation(transcript);
       
     } catch (e) {
       dispatch(addLog({

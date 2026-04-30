@@ -9,7 +9,9 @@ import { registerSW } from 'virtual:pwa-register';
 if (import.meta.env.PROD) {
   const updateSW = registerSW({
     onNeedRefresh() {
-      updateSW(true);
+      window.dispatchEvent(new CustomEvent('yby:update-ready', {
+        detail: { update: () => updateSW(true) },
+      }));
     },
     onOfflineReady() {
       console.log('App ready to work offline');

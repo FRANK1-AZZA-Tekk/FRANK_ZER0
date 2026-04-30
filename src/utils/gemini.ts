@@ -54,7 +54,7 @@ export const processVision = async (base64Image: string): Promise<string> => {
     });
     if (!res.ok) throw new Error("Server Error");
     const data = await res.json();
-    return data.result || "Análise de imagem concluída sem retorno textual.";
+    return data.analysis || data.result || "Análise de imagem concluída sem retorno textual.";
   } catch (error) {
     console.error("Vision Error:", error);
     return "Erro no processamento visual.";
@@ -70,7 +70,7 @@ export const processGeneralCommand = async (command: string, context: string): P
     });
     if (!res.ok) throw new Error("Server Error");
     const data = await res.json();
-    return data.result || "Comando processado, mas sem resposta gerada.";
+    return data.yby_response || data.result?.response || data.result || "Comando processado, mas sem resposta gerada.";
   } catch (error) {
     console.error("API Error:", error);
     return "Erro de processamento neural local.";

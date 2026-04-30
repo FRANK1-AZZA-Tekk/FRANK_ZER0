@@ -11,7 +11,7 @@ export default defineConfig(({mode}) => {
       react(), 
       tailwindcss(),
       VitePWA({
-        registerType: 'autoUpdate',
+        registerType: 'prompt',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
@@ -53,16 +53,19 @@ export default defineConfig(({mode}) => {
           theme_color: '#000000',
           background_color: '#000000',
           display: 'standalone',
+          start_url: '/',
           icons: [
             {
-              src: 'https://picsum.photos/seed/yby192/192/192',
-              sizes: '192x192',
-              type: 'image/png'
+              src: '/yby-icon.svg',
+              sizes: 'any',
+              type: 'image/svg+xml',
+              purpose: 'any maskable'
             },
             {
-              src: 'https://picsum.photos/seed/yby512/512/512',
+              src: '/yby-icon.svg',
               sizes: '512x512',
-              type: 'image/png'
+              type: 'image/svg+xml',
+              purpose: 'any maskable'
             }
           ]
         }
@@ -76,9 +79,19 @@ export default defineConfig(({mode}) => {
         '@': path.resolve(__dirname, '.'),
       },
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (!id.includes('node_modules')) return;
+            if (id.includes('@react-three') || id.includes('/three/')) return 'three-vendor';
+            if (id.includes('/recharts/') || id.includes('/d3')) return 'viz-vendor';
+          },
+        },
+      },
+    },
     server: {
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
+      // HMR can be disabled in remote AI environments to reduce flicker during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
     },
   };
