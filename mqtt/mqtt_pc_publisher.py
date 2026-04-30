@@ -109,6 +109,8 @@ def listen(config: MqttConfig, mock: bool) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description="YBY MQTT publisher PC/Termux")
     parser.add_argument("message", nargs="?", default="PING_YBY", help="Mensagem para o T-Watch")
+    parser.add_argument("--broker", "--host", dest="host", help="IP/host do broker MQTT")
+    parser.add_argument("--port", type=int, help="Porta do broker MQTT")
     parser.add_argument("--message", dest="message_flag", help="Mensagem para o T-Watch; alias amigavel para iniciantes")
     parser.add_argument("--source", default=os.getenv("YBY_NODE_NAME", "pc"), help="Identidade do emissor")
     parser.add_argument("--listen", action="store_true", help="Escuta ACKs em vez de publicar")
@@ -116,6 +118,11 @@ def main() -> int:
     args = parser.parse_args()
 
     config = load_config()
+    if args.host:
+        config.host = args.host
+    if args.port:
+        config.port = args.port
+
     if args.listen:
         listen(config, args.mock)
     else:

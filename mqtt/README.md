@@ -12,7 +12,7 @@ Modulo minimo para comunicacao bidirecional entre PC/Termux e LilyGO T-Watch S3.
 ## Setup no PC
 
 ```bash
-python3 -m pip install --user paho-mqtt
+python3 -m pip install --user paho-mqtt speechrecognition vosk
 python3 mqtt/mqtt_pc_publisher.py --broker 192.168.1.10 --message "PING"
 python3 mqtt/mqtt_pc_publisher.py --broker 192.168.1.10 --listen
 ```
@@ -26,6 +26,25 @@ git clone <URL_DO_REPO> yby
 cd yby
 bash mqtt/mqtt_termux_runner.sh --broker 192.168.1.10 --listen
 ```
+
+## Voice Commands offline
+
+Baixe um modelo Vosk pequeno (<50MB), por exemplo `vosk-model-small-pt-0.3`,
+extraia e aponte a variável:
+
+```bash
+export YBY_VOSK_MODEL=$HOME/models/vosk-model-small-pt-0.3
+python3 mqtt/voice_commands.py --mock --text "YBY status"
+python3 mqtt/voice_commands.py --broker 192.168.1.10 --text "YBY sleep"
+python3 mqtt/voice_commands.py --broker 192.168.1.10
+```
+
+Comandos suportados:
+
+- `YBY status`
+- `YBY sleep`
+- `YBY scan`
+- `YBY optimize`
 
 ## SSH Cursor -> Termux
 
@@ -70,6 +89,9 @@ pio run --target upload
 O HUD LVGL assina `yby/watch/telemetry`, publica presença em `yby/watch/status`
 e alterna telas por swipe. Se o MQTT cair, reduz brilho e entra em deep sleep
 por 30 segundos para poupar bateria.
+
+O HUD tambem assina `yby/watch/command` e executa comandos de voz normalizados
+(`status`, `sleep`, `scan`, `optimize`) publicados pelo PC/Termux.
 
 ## Teste end-to-end
 

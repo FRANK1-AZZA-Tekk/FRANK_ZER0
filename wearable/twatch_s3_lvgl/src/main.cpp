@@ -3,6 +3,7 @@
 #include <ArduinoJson.h>
 #include <TFT_eSPI.h>
 #include <WiFi.h>
+#include <driver/i2s.h>
 #include <esp_sleep.h>
 #include <lvgl.h>
 
@@ -18,6 +19,7 @@ constexpr uint32_t UI_TICK_MS = 5;
 constexpr uint32_t UI_REFRESH_MS = 1000;
 constexpr uint32_t MQTT_RETRY_MS = 3000;
 constexpr uint32_t DEEP_SLEEP_AFTER_MS = 30000;
+constexpr uint32_t VOICE_SAMPLE_MS = 250;
 constexpr uint8_t SCREEN_COUNT = 4;
 
 enum ScreenId : uint8_t {
@@ -35,6 +37,7 @@ struct HudState {
   String gpu = "N/A";
   int battery = 0;
   String lastLog = "boot";
+  String lastVoice = "idle";
 };
 
 HudState state;
@@ -43,6 +46,7 @@ uint32_t lastUiRefresh = 0;
 uint32_t lastMqttAttempt = 0;
 uint32_t lastMqttSeen = 0;
 uint32_t lastTouchMs = 0;
+uint32_t lastVoiceSample = 0;
 
 static lv_display_t *display = nullptr;
 static lv_indev_t *touchInput = nullptr;
@@ -59,6 +63,13 @@ static lv_color_t drawBuffer[240 * 24];
 void setBacklight(uint8_t value) {
   // Brilho por PWM. Ajuste TFT_BL no config.h se sua revisão da placa mudar o pino.
   ledcWrite(0, value);
+}
+
+void beepOk() {
+  // Beep curto: feedback tátil/sonoro simples sem TTS pesado no relógio.
+  if (BUZZER_PIN >= 0) {
+    tone(BUZZER_PIN, 1800, 80);
+  }
 }
 
 void logHud(const String &message) {
@@ -100,6 +111,32 @@ void readTouch(lv_indev_t *, lv_indev_data_t *data) {
     data->point.x = x;
     data->point.y = y;
   }
+}
+
+void setupI2sMic() {
+  // Inicializa I2S apenas para detectar energia de voz.
+  // O reconhecimento de fala real fica no PC/Termux com Vosk.
+  i2s_config_t cfg = {};
+  cfg.mode = static_cast<i2s_mode_t>(I2S_MODE_MASTER | I2S_MODE_RX);
+  cfg.sample_rate = 16000;
+  cfg.bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT;
+  cfg.channel_format = I2S_CHANNEL_FMT_ONLY_LEFT;
+  cfg.communication_format = I2S_COMM_FORMAT_STAND_I2S;
+  cfg.intr_alloc_flags = ESP_INTR_FLAG_LEVEL1;
+  cfg.dma_buf_count = 4;
+  cfg.dma_buf_len = 128;
+  cfg.use_apll = false;
+  cfg.tx_desc_auto_clear = false;
+  cfg.fixed_mclk = 0;
+
+  i2s_pin_config_t pins = {};
+  pins.bck_io_num = I2S_MIC_SCK;
+  pins.ws_io_num = I2S_MIC_WS;
+  pins.data_out_num = I2S_PIN_NO_CHANGE;
+  pins.data_in_num = I2S_MIC_SD;
+
+  i2s_driver_install(I2S_NUM_0, &cfg, 0, nullptr);
+  i2s_set_pin(I2S_NUM_0, &pins);
 }
 
 lv_obj_t *makeLabel(lv_obj_t *parent, int y, const char *text, const lv_color_t color) {
@@ -152,7 +189,7 @@ void renderScreen() {
       lv_label_set_text(titleLabel, "YBY // LOGS");
       lv_label_set_text(line1, "NEURAL_LOG:");
       lv_label_set_text(line2, state.lastLog.c_str());
-      lv_label_set_text(line3, "swipe/touch: proxima tela");
+      lv_label_set_text_fmt(line3, "VOICE: %s", state.lastVoice.c_str());
       break;
   }
 
@@ -213,12 +250,62 @@ void publishPresence() {
   mqtt.publish("yby/watch/status", 1, true, payload);
 }
 
+void publishVoiceEvent(const char *event) {
+  // Publica evento de voz para o PC/Termux executar STT offline com Vosk.
+  if (!mqtt.connected()) return;
+  StaticJsonDocument<160> doc;
+  doc["node"] = "twatch_s3_plus";
+  doc["event"] = event;
+  doc["ts"] = millis();
+
+  char payload[160];
+  serializeJson(doc, payload);
+  mqtt.publish("yby/watch/voice", 1, false, payload);
+}
+
+void publishAck(const String &command) {
+  StaticJsonDocument<160> doc;
+  doc["node"] = "twatch_s3_plus";
+  doc["ack"] = command;
+  doc["screen"] = currentScreen;
+
+  char payload[160];
+  serializeJson(doc, payload);
+  mqtt.publish("yby/watch/ack", 1, false, payload);
+}
+
+void executeCommand(const String &command) {
+  // Comandos cyberpunk mínimos vindos de PC/Termux por voz/MQTT.
+  if (command == "status") {
+    currentScreen = SCREEN_SYSTEM;
+    logHud("cmd status");
+  } else if (command == "sleep") {
+    publishAck(command);
+    beepOk();
+    enterDeepSleep();
+  } else if (command == "scan") {
+    currentScreen = SCREEN_LOGS;
+    logHud("cmd scan // aguardando yby-scan");
+  } else if (command == "optimize") {
+    currentScreen = SCREEN_LOGS;
+    logHud("cmd optimize // modo economia");
+    setBacklight(BRIGHTNESS_DIM);
+  } else if (command == "next") {
+    nextScreen();
+  }
+
+  beepOk();
+  publishAck(command);
+  renderScreen();
+}
+
 void onMqttConnect(bool) {
   state.mqttOk = true;
   lastMqttSeen = millis();
   logHud("mqtt conectado");
   mqtt.subscribe("yby/watch/telemetry", 1);
   mqtt.subscribe("yby/watch/command", 1);
+  mqtt.subscribe("yby/watch/cmd", 1);
   publishPresence();
 }
 
@@ -234,10 +321,17 @@ void onMqttMessage(char *topic, char *payload, AsyncMqttClientMessageProperties,
   body.reserve(len + 1);
   for (size_t i = 0; i < len; i++) body += payload[i];
 
-  if (String(topic) == "yby/watch/command") {
-    if (body == "next") nextScreen();
-    if (body == "sleep") enterDeepSleep();
-    mqtt.publish("yby/watch/ack", 1, false, "ok");
+  String topicName = String(topic);
+  if (topicName == "yby/watch/command" || topicName == "yby/watch/cmd") {
+    StaticJsonDocument<160> cmdDoc;
+    if (deserializeJson(cmdDoc, body) == DeserializationError::Ok) {
+      String command = String(cmdDoc["command"] | cmdDoc["message"] | "");
+      command.toLowerCase();
+      executeCommand(command);
+    } else {
+      body.toLowerCase();
+      executeCommand(body);
+    }
     return;
   }
 
@@ -252,8 +346,32 @@ void onMqttMessage(char *topic, char *payload, AsyncMqttClientMessageProperties,
   state.ram = doc["ram"] | state.ram;
   state.gpu = String(doc["gpu"] | state.gpu.c_str());
   state.battery = doc["battery"] | state.battery;
-  logHud("telemetria recebida");
+  const char *logMsg = doc["log"] | "telemetria recebida";
+  logHud(logMsg);
   renderScreen();
+}
+
+void sampleVoiceEnergy() {
+  // Detector simples de energia: não transcreve; só avisa o PC que houve fala/toque.
+  if (millis() - lastVoiceSample < VOICE_SAMPLE_MS) return;
+  lastVoiceSample = millis();
+
+  int16_t samples[64];
+  size_t bytesRead = 0;
+  if (i2s_read(I2S_NUM_0, samples, sizeof(samples), &bytesRead, 0) != ESP_OK || bytesRead == 0) return;
+
+  uint32_t energy = 0;
+  const size_t count = bytesRead / sizeof(int16_t);
+  for (size_t i = 0; i < count; i++) energy += abs(samples[i]);
+  energy = count ? energy / count : 0;
+
+  if (energy > I2S_VOICE_THRESHOLD) {
+    state.lastVoice = "wake";
+    logHud("voice energy // publicar evento");
+    publishVoiceEvent("touch_to_talk");
+    beepOk();
+    renderScreen();
+  }
 }
 
 void connectMqtt() {
@@ -267,6 +385,9 @@ void connectMqtt() {
 void setup() {
   Serial.begin(115200);
   pinMode(BACK_BUTTON_PIN, INPUT_PULLUP);
+  if (BUZZER_PIN >= 0) {
+    pinMode(BUZZER_PIN, OUTPUT);
+  }
 
   pinMode(TFT_BL, OUTPUT);
   ledcSetup(0, 5000, 8);
@@ -284,6 +405,7 @@ void setup() {
   touchInput = lv_indev_create();
   lv_indev_set_type(touchInput, LV_INDEV_TYPE_POINTER);
   lv_indev_set_read_cb(touchInput, readTouch);
+  setupI2sMic();
 
   buildUi();
   renderScreen();
@@ -301,6 +423,7 @@ void loop() {
   lv_tick_inc(UI_TICK_MS);
   delay(UI_TICK_MS);
   handleLocalControls();
+  sampleVoiceEnergy();
 
   uint32_t now = millis();
 

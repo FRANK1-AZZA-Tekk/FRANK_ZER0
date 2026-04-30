@@ -15,7 +15,7 @@ pkg install -y git openssh python htop
 
 echo "[YBY][MQTT] Instalando dependência Python leve..."
 python -m pip install --user --upgrade pip
-python -m pip install --user paho-mqtt
+python -m pip install --user paho-mqtt SpeechRecognition vosk
 
 if [ -n "$REPO_URL" ] && [ ! -d "$REPO_DIR/.git" ]; then
   echo "[YBY][MQTT] Clonando repositório em $REPO_DIR..."
@@ -45,3 +45,6 @@ python mqtt/mqtt_pc_publisher.py --host "$BROKER_HOST" --port "$BROKER_PORT" --m
 
 echo "[YBY][MQTT] Listener ativo por 20s para receber ACK..."
 sleep 20
+
+echo "[YBY][VOICE] Para comando de voz offline, baixe um modelo Vosk pequeno (<50MB) e rode:"
+echo "  python mqtt/voice_commands.py --broker $BROKER_HOST --model ~/vosk-model-small-pt"
