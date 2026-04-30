@@ -1,6 +1,5 @@
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useEffect, useRef, useState, Suspense, lazy } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { motion } from 'motion/react';
 import { Loader2 } from 'lucide-react';
 
 import { TopBar } from './components/TopBar';
@@ -32,29 +31,59 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isCommandHubOpen, setIsCommandHubOpen] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [pendingUpdate, setPendingUpdate] = useState<(() => void) | null>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<number | null>(null);
+  const pointerRef = useRef({ x: -40, y: -40 });
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    setMousePos({ x: e.clientX, y: e.clientY });
+    pointerRef.current = { x: e.clientX, y: e.clientY };
+    if (frameRef.current) return;
+
+    frameRef.current = window.requestAnimationFrame(() => {
+      frameRef.current = null;
+      const cursor = cursorRef.current;
+      if (!cursor) return;
+
+      const { x, y } = pointerRef.current;
+      cursor.style.transform = `translate3d(${x - 12}px, ${y - 12}px, 0)`;
+    });
   };
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mediaQuery.matches) return;
+
+    const handleUpdateReady = (event: Event) => {
+      const update = (event as CustomEvent<{ update?: () => void }>).detail?.update;
+      if (update) setPendingUpdate(() => update);
+    };
+
+    window.addEventListener('yby:update-ready', handleUpdateReady);
+    return () => window.removeEventListener('yby:update-ready', handleUpdateReady);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (frameRef.current) window.cancelAnimationFrame(frameRef.current);
+    };
+  }, []);
 
   return (
     <HashRouter>
       <div 
-        className="min-h-screen bg-[#050505] text-white font-mono flex flex-col overflow-x-hidden selection:bg-[#00ff88] selection:text-black cursor-none"
+        className="min-h-screen bg-[#050505] text-white font-mono flex flex-col overflow-x-hidden selection:bg-[#00ff88] selection:text-black sm:cursor-none motion-reduce:cursor-auto"
         onMouseMove={handleMouseMove}
       >
         
         {/* Exocortex Neural Follower */}
-        <motion.div 
-          animate={{ x: mousePos.x, y: mousePos.y }}
-          transition={{ type: "spring", damping: 40, stiffness: 250, mass: 0.5 }}
-          className="fixed w-6 h-6 rounded-full border border-[#00ff88]/40 pointer-events-none z-[9999] flex items-center justify-center"
-          style={{ left: -12, top: -12 }}
+        <div
+          ref={cursorRef}
+          className="fixed left-0 top-0 hidden h-6 w-6 rounded-full border border-[#00ff88]/40 pointer-events-none z-[9999] sm:flex items-center justify-center motion-reduce:hidden will-change-transform"
         >
           <div className="w-1.5 h-1.5 bg-[#00ff88] rounded-full shadow-[0_0_10px_#00ff88]"></div>
           <div className="absolute inset-0 border border-[#00ff88]/20 rounded-full animate-ping opacity-30"></div>
-        </motion.div>
+        </div>
 
         {/* Top System Bar */}
         <TopBar 
@@ -101,6 +130,27 @@ export default function App() {
         
         {/* Central Command Hub Overlay */}
         <CommandHub isOpen={isCommandHubOpen} onClose={() => setIsCommandHubOpen(false)} />
+
+        {pendingUpdate && (
+          <div className="fixed bottom-24 right-4 z-[9998] w-[calc(100vw-2rem)] max-w-sm rounded-2xl border border-[#00ff88]/30 bg-black/90 p-5 shadow-[0_0_35px_rgba(0,255,136,0.18)] backdrop-blur-2xl">
+            <p className="mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-[#00ff88]">YBY_UPDATE_READY</p>
+            <p className="mb-4 text-xs leading-relaxed text-gray-400">Nova versao pronta. Recarregue quando nao estiver no meio de uma operacao.</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setPendingUpdate(null)}
+                className="flex-1 rounded-xl border border-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:bg-white/5"
+              >
+                Depois
+              </button>
+              <button
+                onClick={pendingUpdate}
+                className="flex-1 rounded-xl bg-[#00ff88] px-4 py-2 text-[10px] font-black uppercase tracking-widest text-black hover:bg-[#00ff88]/80"
+              >
+                Atualizar
+              </button>
+            </div>
+          </div>
+        )}
         
       </div>
     </HashRouter>

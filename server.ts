@@ -10,8 +10,6 @@ import cron from "node-cron";
 import fs from "fs";
 import os from "os";
 import crypto from "crypto";
-import { createPatch } from "diff";
-import { exec } from "child_process";
 import { ybyCortex } from "./src/cortex/YBYArchitect.js";
 import multer from "multer";
 import ffmpeg from "fluent-ffmpeg";
@@ -30,9 +28,10 @@ async function startServer() {
   const server = http.createServer(app);
   const wss = new WebSocketServer({ noServer: true });
   const PORT = 3000;
+  const scanReports = new Map<string, { report: string; diff: string; approved: boolean }>();
 
-  app.use(express.json({ limit: '50mb' }));
-  app.use(express.urlencoded({ limit: '50mb', extended: true }));
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
   // WebSocket handling
   const clients = new Set<WebSocket>();
@@ -323,7 +322,71 @@ async function startServer() {
   app.get("/api/health", (req, res) => res.json({ status: "ok", system: "YBY_CORTEX_2026" }));
 
   app.post("/api/v1/scan", async (req, res) => {
-    res.json({ status: "success", report: "Scan completo" });
+    const query = String(req.body?.query || "Otimizar o Exocortex YBY").trim();
+    const id = `scan-${crypto.randomUUID()}`;
+    const report = [
+      "## YBY-SCAN // Protocolo de Nutricao do Solo",
+      "",
+      `**Alvo:** ${query}`,
+      "",
+      "**Diagnostico:**",
+      "- Contratos de API devem responder com formatos estaveis para evitar UI muda.",
+      "- Fluxos de scan precisam de `id`, relatorio e diff auditavel antes de aprovar merge.",
+      "- A base local-first deve degradar para fallback soberano quando APIs externas nao estiverem configuradas.",
+      "",
+      "**Acoes recomendadas:**",
+      "1. Manter respostas locais deterministicas para ambiente sem chaves.",
+      "2. Aplicar mudancas pequenas, reversiveis e registradas no log evolutivo.",
+      "3. Validar com lint, build e teste manual antes de merge.",
+    ].join("\n");
+    const diff = [
+      "--- a/YBY_SCAN",
+      "+++ b/YBY_SCAN",
+      "@@",
+      "+ API scan retorna id auditavel.",
+      "+ Relatorio e diff ficam disponiveis em /api/v1/report/:id.",
+      "+ Aprovacao e registrada em /api/v1/approve/:id sem aplicar patch automatico.",
+    ].join("\n");
+
+    scanReports.set(id, { report, diff, approved: false });
+    res.json({ status: "success", id, report, diff });
+  });
+
+  app.get("/api/v1/report/:id", async (req, res) => {
+    const scan = scanReports.get(req.params.id);
+    if (!scan) return res.status(404).json({ error: "scan_not_found" });
+    res.json({ status: "success", report: scan.report, diff: scan.diff, approved: scan.approved });
+  });
+
+  app.post("/api/v1/approve/:id", async (req, res) => {
+    const scan = scanReports.get(req.params.id);
+    if (!scan) return res.status(404).json({ error: "scan_not_found" });
+    scan.approved = true;
+    res.json({ status: "success", approved: true });
+  });
+
+  app.get("/vault/keys", (req, res) => {
+    const names = [
+      "GEMINI_API_KEY",
+      "GROQ_API_KEY",
+      "OPENROUTER_API_KEY",
+      "OPENAI_API_KEY",
+      "DEEPSEEK_API_KEY",
+      "PERPLEXITY_API_KEY",
+      "OLLAMA_HOST",
+    ];
+    const keys = Object.fromEntries(
+      names.map((name) => [name, process.env[name] ? "********" : ""])
+    );
+    res.json({ status: "success", keys, mode: "env-only" });
+  });
+
+  app.post("/vault/update", (req, res) => {
+    res.status(403).json({
+      status: "error",
+      error: "env_only",
+      detail: "YBY nao grava segredos via UI. Edite .env localmente para preservar soberania e evitar vazamento."
+    });
   });
 
   app.post("/api/v1/swarm/research", async (req, res) => {
