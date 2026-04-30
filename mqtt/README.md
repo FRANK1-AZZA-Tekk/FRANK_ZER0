@@ -34,9 +34,9 @@ extraia e aponte a variável:
 
 ```bash
 export YBY_VOSK_MODEL=$HOME/models/vosk-model-small-pt-0.3
-python3 mqtt/voice_commands.py --mock --text "YBY status"
-python3 mqtt/voice_commands.py --broker 192.168.1.10 --text "YBY sleep"
-python3 mqtt/voice_commands.py --broker 192.168.1.10
+python3 mqtt/voice_pc.py --mock --text "FRANK status"
+python3 mqtt/voice_pc.py --broker 192.168.1.10 --text "FRANK sleep"
+python3 mqtt/voice_pc.py --broker 192.168.1.10
 ```
 
 Comandos suportados:
@@ -45,6 +45,20 @@ Comandos suportados:
 - `YBY sleep`
 - `YBY scan`
 - `YBY optimize`
+- `FRANK status`
+- `FRANK sleep`
+- `FRANK scan`
+- `FRANK optimize`
+
+## Wake word training
+
+Use um modelo pequeno Vosk (<50MB) e treine o hábito operacional:
+
+1. Fale sempre `FRANK` + comando em frase curta.
+2. Mantenha `phrase_time_limit` em 5s para reduzir falso positivo.
+3. Use ruído ambiente real durante `adjust_for_ambient_noise`.
+4. Teste 20 repetições de cada comando; se falhar muito, troque o microfone antes de trocar o modelo.
+5. Para reduzir falso positivo, ignore frases sem wake word e mantenha apenas 4 comandos.
 
 ## SSH Cursor -> Termux
 
@@ -66,7 +80,7 @@ ssh -p 8022 <usuario>@<ip_do_xiaomi>
 
 ## Flash do T-Watch
 
-1. Abra `mqtt/mqtt_watch_sub.ino` no Arduino IDE ou PlatformIO.
+1. Abra `mqtt/voice_watch.ino` ou `mqtt/mqtt_watch_sub.ino` no Arduino IDE ou PlatformIO.
 2. Instale bibliotecas:
    - `PubSubClient`
    - `TFT_eSPI`

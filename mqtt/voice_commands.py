@@ -25,7 +25,7 @@ class VoiceCommand:
 
 
 def parse_voice_command(text: str) -> VoiceCommand | None:
-    """Extrai comando depois da wake word YBY.
+    """Extrai comando depois da wake word YBY/FRANK.
 
     A lógica é propositalmente simples:
     - Sem NLP pesado.
@@ -34,7 +34,7 @@ def parse_voice_command(text: str) -> VoiceCommand | None:
     """
 
     normalized = text.strip().lower()
-    if not re.search(r"\b(yby)\b", normalized):
+    if not re.search(r"\b(yby|frank)\b", normalized):
         return None
 
     if re.search(r"\b(status|estado|sistema)\b", normalized):
