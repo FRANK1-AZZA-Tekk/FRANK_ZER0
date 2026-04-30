@@ -166,6 +166,23 @@
             <p class="terminal-line">estado final: SISTEMA ESTÁVEL</p>
             <p class="terminal-line animate-pulse">cursor aguardando próximo comando...</p>
           </div>
+
+          <div class="mt-4 flex flex-col gap-2 border-t border-matrix/40 pt-4 sm:flex-row">
+            <input
+              id="chat-input"
+              type="text"
+              autocomplete="off"
+              placeholder="digite comando para FRANK..."
+              class="min-h-11 flex-1 border border-matrix/60 bg-black px-3 py-2 text-sm text-matrix outline-none placeholder:text-matrix/35 focus:border-amber"
+            />
+            <button
+              id="chat-send"
+              type="button"
+              class="min-h-11 border border-amber/70 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-amber hover:bg-amber hover:text-black"
+            >
+              enviar
+            </button>
+          </div>
         </section>
       </section>
 
@@ -174,8 +191,12 @@
       </footer>
     </main>
     <script>
-      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      // URL base do backend FastAPI local. O front pode estar em :3000 e a API em :8001.
+      const apiBase = `${window.location.protocol}//${window.location.hostname}:8001`;
       const logBox = document.getElementById('neural-log');
+      const statusIndicator = document.getElementById('thermal-status');
+      const chatInput = document.getElementById('chat-input');
+      const chatSend = document.getElementById('chat-send');
 
       function clampPercent(value) {
         const number = Number(value);
@@ -197,6 +218,27 @@
         while (logBox.children.length > 12) logBox.removeChild(logBox.firstElementChild);
       }
 
+      // Escreve uma linha aos poucos para simular terminal antigo carregando dados.
+      function typeLog(message, amber = false, delayMs = 14) {
+        const line = document.createElement('p');
+        line.className = `terminal-line${amber ? ' text-amber' : ''}`;
+        logBox.appendChild(line);
+        while (logBox.children.length > 12) logBox.removeChild(logBox.firstElementChild);
+
+        let index = 0;
+        const timer = window.setInterval(() => {
+          line.textContent += message[index] || '';
+          index += 1;
+          if (index >= message.length) window.clearInterval(timer);
+        }, delayMs);
+      }
+
+      // Controla o indicador visual do link neural.
+      function setConnectionState(online, label = 'ONLINE') {
+        statusIndicator.textContent = label;
+        statusIndicator.className = online ? 'text-xs text-matrix/70' : 'text-xs text-red-500';
+      }
+
       function applyTelemetry(payload) {
         setMetric('cpu-value', 'cpu-bar', payload.cpu?.usage_percent);
         setMetric('ram-value', 'ram-bar', payload.ram?.used_percent);
@@ -206,7 +248,7 @@
         const gpuTemp = payload.gpu?.temperature?.celsius;
         const hottest = [cpuTemp, gpuTemp].filter(Number.isFinite).sort((a, b) => b - a)[0];
         const thermal = payload.thermal?.mode || 'normal';
-        document.getElementById('thermal-status').textContent = thermal.toUpperCase();
+        setConnectionState(true, thermal.toUpperCase());
         document.getElementById('temperature-line').textContent =
           `TEMP // CPU ${cpuTemp ?? 'N/A'}°C // GPU ${gpuTemp ?? 'N/A'}°C`;
 
@@ -215,18 +257,57 @@
         }
       }
 
-      function connectTelemetry() {
-        const socket = new WebSocket(`${wsProtocol}//${window.location.hostname}:8001/ws/status`);
-        socket.onopen = () => pushLog('websocket de telemetria conectado');
-        socket.onmessage = (event) => applyTelemetry(JSON.parse(event.data));
-        socket.onerror = () => pushLog('falha no websocket de telemetria', true);
-        socket.onclose = () => {
-          pushLog('telemetria desconectada // tentando reconectar', true);
-          setTimeout(connectTelemetry, 3000);
-        };
+      // Consulta /status a cada 2 segundos. Simples, previsivel e sem biblioteca externa.
+      async function pollTelemetry() {
+        try {
+          const response = await fetch(`${apiBase}/status`, { cache: 'no-store' });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          applyTelemetry(await response.json());
+        } catch (error) {
+          setConnectionState(false, 'OFFLINE');
+          pushLog('[OFFLINE] - Link Neural Rompido', true);
+        }
       }
 
-      connectTelemetry();
+      // Envia mensagem para /chat e imprime resposta com efeito de terminal.
+      async function sendChatMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        chatInput.value = '';
+        pushLog(`HOST: ${message}`);
+        chatSend.disabled = true;
+        chatSend.textContent = '...';
+
+        try {
+          const response = await fetch(`${apiBase}/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message }),
+          });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+          const data = await response.json();
+          setConnectionState(true, 'ONLINE');
+          typeLog(`FRANK: ${data.response}`, !data.ok);
+        } catch (error) {
+          setConnectionState(false, 'OFFLINE');
+          typeLog('[OFFLINE] - Link Neural Rompido', true);
+        } finally {
+          chatSend.disabled = false;
+          chatSend.textContent = 'enviar';
+          chatInput.focus();
+        }
+      }
+
+      // Enter envia; botao tambem envia. Mantem a interface leve e soberana.
+      chatSend.addEventListener('click', sendChatMessage);
+      chatInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') sendChatMessage();
+      });
+
+      pollTelemetry();
+      window.setInterval(pollTelemetry, 2000);
     </script>
   </body>
 </html>
