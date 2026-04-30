@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""HUD mobile do FRANK para Termux.
+"""HUD mobile do YBY para Termux.
 
 Interface 100% texto. Sem root. Sem bloat. Conecta ao FastAPI do PC pela rede
 Wi-Fi local e resiste a quedas curtas de conexao.
@@ -23,9 +23,9 @@ from rich.table import Table
 ROOT = Path(__file__).resolve().parent
 load_dotenv(ROOT / ".env")
 
-PC_HOST = os.getenv("FRANK_PC_HOST", "127.0.0.1")
-PC_PORT = int(os.getenv("FRANK_PC_PORT", "8001"))
-TIMEOUT = float(os.getenv("FRANK_TIMEOUT", "4"))
+PC_HOST = os.getenv("YBY_PC_HOST", "127.0.0.1")
+PC_PORT = int(os.getenv("YBY_PC_PORT", "8001"))
+TIMEOUT = float(os.getenv("YBY_TIMEOUT", "4"))
 BASE_URL = f"http://{PC_HOST}:{PC_PORT}"
 
 console = Console()
@@ -44,7 +44,7 @@ def request_json(method: str, path: str, payload: dict[str, Any] | None = None) 
 
 def header() -> Panel:
     return Panel(
-        "[bold green]FRANK MOBILE_NODE[/bold green]\n"
+        "[bold green]YBY MOBILE_NODE[/bold green]\n"
         f"[dim]PC alvo:[/dim] {BASE_URL}  [dim]modo:[/dim] Wi-Fi local / sem root",
         border_style="green",
         box=box.SQUARE,
@@ -81,7 +81,7 @@ def show_status() -> None:
 
 
 def chat() -> None:
-    message = Prompt.ask("[green]Prompt para FRANK[/green]").strip()
+    message = Prompt.ask("[green]Prompt para YBY[/green]").strip()
     if not message:
         return
 

@@ -6,7 +6,7 @@ O YBY é um exocórtex cibernético, uma extensão do corpo, mente e alma do usu
 
 A versão V26 introduz a arquitetura de **Agentes Híbridos (Swarm)** e **Zero UI**, otimizada para wearables (Lilygo T-Watch S3) e smartphones (Xiaomi 12).
 
-Para a arquitetura operacional completa da base local-first, consulte [`docs/FRANK_ZERO_STACK.md`](docs/FRANK_ZERO_STACK.md).
+Para a arquitetura operacional completa da base local-first, consulte [`docs/YBY_STACK.md`](docs/YBY_STACK.md).
 
 ### Componentes Principais
 
@@ -45,10 +45,10 @@ pip install -r requirements.txt
 python app.py
 ```
 
-### Backend FRANK FastAPI (Ollama + Telemetria)
+### Backend YBY FastAPI (Ollama + Telemetria)
 ```bash
 pip install -r backend/requirements.txt
-python -m uvicorn backend.frank_api:app --host 127.0.0.1 --port 8001
+python -m uvicorn backend.yby_api:app --host 127.0.0.1 --port 8001
 ```
 
 - `POST /chat`: envia mensagem ao Ollama local (`llama3` ou modelo disponível).
@@ -72,7 +72,7 @@ cp .env.example .env
 python terminal_hud.py
 ```
 
-- Configure `FRANK_PC_HOST` no `.env` com o IP Wi-Fi/Tailscale do PC.
+- Configure `YBY_PC_HOST` no `.env` com o IP Wi-Fi/Tailscale do PC.
 - O menu consulta `/status`, envia prompts para `/chat` e aciona `/evolve`.
 
 ## Princípios de Design

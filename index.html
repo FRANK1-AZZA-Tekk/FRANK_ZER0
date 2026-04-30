@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#000000" />
-    <title>FRANK // BUNKER DASHBOARD</title>
+    <title>YBY // BUNKER DASHBOARD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -68,7 +68,7 @@
       <header class="border border-matrix/70 p-4 sm:p-5">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p class="text-xs uppercase tracking-[0.45em] text-amber">Projeto FRANK</p>
+            <p class="text-xs uppercase tracking-[0.45em] text-amber">Projeto YBY</p>
             <h1 class="mt-2 text-3xl font-black uppercase tracking-[0.18em] text-matrix sm:text-5xl">
               Bunker Digital
             </h1>
@@ -155,7 +155,7 @@
           </div>
 
           <div id="neural-log" class="flex-1 overflow-hidden bg-bunker p-3 text-xs leading-6 text-matrix sm:text-sm">
-            <p class="terminal-line">bootando núcleo FRANK...</p>
+            <p class="terminal-line">bootando núcleo YBY...</p>
             <p class="terminal-line">checando barramento Ryzen 5 // OK</p>
             <p class="terminal-line">memória física detectada: 16GB // OK</p>
             <p class="terminal-line">GPU GTX 1650 em modo sentinela // OK</p>
@@ -172,7 +172,7 @@
               id="chat-input"
               type="text"
               autocomplete="off"
-              placeholder="digite comando para FRANK..."
+              placeholder="digite comando para YBY..."
               class="min-h-11 flex-1 border border-matrix/60 bg-black px-3 py-2 text-sm text-matrix outline-none placeholder:text-matrix/35 focus:border-amber"
             />
             <button
@@ -187,7 +187,7 @@
       </section>
 
       <footer class="border border-matrix/40 p-3 text-center text-[10px] uppercase tracking-[0.28em] text-matrix/60">
-        FRANK // BUNKER DIGITAL // SOBERANIA LOCAL // MOBILE-FIRST
+        YBY // BUNKER DIGITAL // SOBERANIA LOCAL // MOBILE-FIRST
       </footer>
     </main>
     <script>
@@ -289,7 +289,7 @@
 
           const data = await response.json();
           setConnectionState(true, 'ONLINE');
-          typeLog(`FRANK: ${data.response}`, !data.ok);
+          typeLog(`YBY: ${data.response}`, !data.ok);
         } catch (error) {
           setConnectionState(false, 'OFFLINE');
           typeLog('[OFFLINE] - Link Neural Rompido', true);

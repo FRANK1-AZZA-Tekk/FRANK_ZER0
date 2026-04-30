@@ -5,7 +5,7 @@
 
 #include "config.h"
 
-// Firmware base para Lilygo T-Watch S3 Plus como Wearable Node do FRANK.
+// Firmware base para Lilygo T-Watch S3 Plus como Wearable Node do YBY.
 // Escopo deliberadamente pequeno: somente Wi-Fi, LCD e HTTP do relogio.
 
 TFT_eSPI tft = TFT_eSPI();
@@ -42,7 +42,7 @@ void drawFrame() {
 
   tft.setTextDatum(TL_DATUM);
   tft.setTextColor(TFT_GREEN, TFT_BLACK);
-  tft.drawString("FRANK // WEARABLE_NODE", 8, 8, 2);
+  tft.drawString("YBY // WEARABLE_NODE", 8, 8, 2);
   tft.setTextColor(TFT_ORANGE, TFT_BLACK);
   tft.drawString("BUNKER DIGITAL", 8, 22, 1);
 }
@@ -100,7 +100,7 @@ void fetchStatus() {
   }
 
   HTTPClient http;
-  String url = String(FRANK_API_BASE) + "/status";
+  String url = String(YBY_API_BASE) + "/status";
 
   // HTTPClient faz a requisição GET para o FastAPI do PC.
   // Timeout curto: se a rede cair, o relógio não fica travado esperando.

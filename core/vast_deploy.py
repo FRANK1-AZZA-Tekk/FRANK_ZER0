@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Orquestrador Vast.ai para a musculatura cloud do FRANK.
+"""Orquestrador Vast.ai para a musculatura cloud do YBY.
 
 Este script roda localmente sem root. Ele conversa com a API Vast.ai, cria uma
 instancia GPU sob demanda, sobe um container Ollama/vLLM por SSH e atualiza o
@@ -144,15 +144,15 @@ def provision_runtime(
         port = 8000
         command = (
             "docker run -d --gpus all --restart unless-stopped "
-            f"-p {port}:8000 --name frank-vllm vllm/vllm-openai:latest "
+            f"-p {port}:8000 --name yby-vllm vllm/vllm-openai:latest "
             f"--model {shlex.quote(model)} --host 0.0.0.0"
         )
     else:
         port = 11434
         command = (
             "docker run -d --gpus all --restart unless-stopped "
-            f"-p {port}:11434 --name frank-ollama {DEFAULT_IMAGE} && "
-            f"sleep 5 && docker exec frank-ollama ollama pull {shlex.quote(model)}"
+            f"-p {port}:11434 --name yby-ollama {DEFAULT_IMAGE} && "
+            f"sleep 5 && docker exec yby-ollama ollama pull {shlex.quote(model)}"
         )
     ssh(command, host, ssh_port, execute=execute)
     return port
@@ -182,7 +182,7 @@ def update_env(endpoint: str) -> None:
 
     ENV_PATH.write_text("\n".join(updated) + "\n", encoding="utf-8")
     os.chmod(ENV_PATH, 0o600)
-    print(f"[FRANK] .env atualizado com VAST_INFERENCE_URL={endpoint}")
+    print(f"[YBY] .env atualizado com VAST_INFERENCE_URL={endpoint}")
 
 
 def find_idle_instances(config: VastConfig, idle_minutes: int) -> list[dict[str, Any]]:
@@ -193,12 +193,12 @@ def find_idle_instances(config: VastConfig, idle_minutes: int) -> list[dict[str,
     return [
         item
         for item in instances
-        if item.get("label") == "frank-vast-runtime" and float(item.get("duration", 0)) > cutoff
+        if item.get("label") == "yby-vast-runtime" and float(item.get("duration", 0)) > cutoff
     ]
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="FRANK Vast.ai Orchestrator")
+    parser = argparse.ArgumentParser(description="YBY Vast.ai Orchestrator")
     parser.add_argument("action", choices=["search", "deploy", "destroy", "killswitch"])
     parser.add_argument("--execute", action="store_true", help="Executa alteracoes reais no Vast.ai.")
     parser.add_argument("--offer-id", type=int)
@@ -229,7 +229,7 @@ def main() -> int:
             if args.offer_id is None:
                 offers = search_offers(config, limit=1)
                 if not offers:
-                    raise SystemExit("Nenhuma oferta Vast.ai encontrada para a stack FRANK.")
+                    raise SystemExit("Nenhuma oferta Vast.ai encontrada para a stack YBY.")
                 args.offer_id = int(offers[0]["id"])
             instance = create_instance(config, args.offer_id, DEFAULT_IMAGE if args.runtime == "ollama" else "vllm/vllm-openai:latest")
             print(json.dumps(instance, ensure_ascii=False))
@@ -248,10 +248,10 @@ def main() -> int:
             victims = find_idle_instances(config, args.idle_minutes)
             for instance in victims:
                 instance_id = str(instance.get("id"))
-                print(f"[FRANK] Kill switch candidato: {instance_id}")
+                print(f"[YBY] Kill switch candidato: {instance_id}")
                 destroy_instance(config, instance_id)
             if not victims:
-                print("[FRANK] Nenhuma instancia ociosa encontrada.")
+                print("[YBY] Nenhuma instancia ociosa encontrada.")
             return 0
     except requests.RequestException as exc:
         print(f"[ERRO_REDE_VAST]: {exc}")

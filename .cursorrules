@@ -25,7 +25,7 @@
 - Prioridade maxima: performance, privacidade e soberania digital.
 - Prefira modelos locais via Ollama/ExLlamaV2 sempre que possivel.
 - APIs externas sao apoio opcional, nunca dependencia central.
-- A stack operacional esta documentada em `docs/FRANK_ZERO_STACK.md`.
+- A stack operacional esta documentada em `docs/YBY_STACK.md`.
 - Use Tailscale + Mosquitto/MQTT como camada nervosa de baixa latencia quando houver integracao PC/Xiaomi/ESP32.
 - Para a GTX 1650 4GB, priorize quantizacao extrema (EXL2/GGUF) e failover via LiteLLM/OpenRouter antes de estourar VRAM.
 

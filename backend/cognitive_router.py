@@ -1,4 +1,4 @@
-"""Roteador cognitivo hibrido do FRANK.
+"""Roteador cognitivo hibrido do YBY.
 
 Function Over Form: uma classe, heuristica simples e saida JSON padronizada.
 O roteador tenta a melhor rota cognitiva e volta para Ollama quando a nuvem falha.
@@ -99,7 +99,7 @@ class NexusRouter:
         payload = {
             "model": model,
             "messages": [
-                {"role": "system", "content": "Você é o FRANK, exocórtex local. Responda em português-BR, direto e útil."},
+                {"role": "system", "content": "Você é o YBY, exocórtex local. Responda em português-BR, direto e útil."},
                 {"role": "user", "content": prompt},
             ],
             "stream": False,
@@ -175,7 +175,7 @@ class NexusRouter:
         model: str,
         prompt: str,
         *,
-        system: str = "Você é o FRANK. Responda em português-BR, direto e útil.",
+        system: str = "Você é o YBY. Responda em português-BR, direto e útil.",
     ) -> dict[str, Any]:
         return await self._post_json(
             url,

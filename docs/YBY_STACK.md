@@ -1,8 +1,8 @@
-# FRANK ZERO STACK
+# YBY STACK
 
 ## V1.0 - Core Architecture
 
-Este documento fixa a stack operacional do FRANK ZERO: um exocortex local-first, otimizado para Ryzen 5 4600G, GTX 1650 4GB, Xiaomi 12/Termux e ESP32-S3. A regra principal permanece: Function Over Form.
+Este documento fixa a stack operacional do YBY: um exocortex local-first, otimizado para Ryzen 5 4600G, GTX 1650 4GB, Xiaomi 12/Termux e ESP32-S3. A regra principal permanece: Function Over Form.
 
 ## 1. Infraestrutura e Rede - Sistema Nervoso
 
@@ -14,7 +14,7 @@ Este documento fixa a stack operacional do FRANK ZERO: um exocortex local-first,
 
 Portas sugeridas:
 - `3000`: dashboard bunker estatico / Vite wrapper.
-- `8001`: FastAPI local (`backend.frank_api`).
+- `8001`: FastAPI local (`backend.yby_api`).
 - `11434`: Ollama local.
 - `1883`: MQTT TCP interno.
 - `9001`: MQTT via WebSocket para browser/mobile.
@@ -29,7 +29,7 @@ Portas sugeridas:
 | FastAPI | API de borda local. | Endpoints async, telemetria em thread, WebSocket para status. |
 
 Estado atual no repo:
-- `backend/frank_api.py` ja implementa FastAPI async, Ollama, telemetria e WebSocket.
+- `backend/yby_api.py` ja implementa FastAPI async, Ollama, telemetria e WebSocket.
 - O proximo passo natural e adicionar adaptador LiteLLM/ExLlamaV2 atras do mesmo contrato de `/chat`.
 
 ## 3. Sistema Vocal e Auditivo - Latencia Zero
@@ -38,10 +38,10 @@ Estado atual no repo:
 | --- | --- | --- |
 | Whisper.cpp | Ouvido local no Ryzen. | Rodar CPU-first, sem depender de GPU. |
 | Kokoro-82M | Voz local leve. | Preferir ONNX/quantizacao para baixa latencia. |
-| OpenWakeWord + Wyoming | Palavra de ativacao. | PC dorme ate ouvir "Frank". |
+| OpenWakeWord + Wyoming | Palavra de ativacao. | PC dorme ate ouvir "YBY". |
 
 Fluxo-alvo:
-1. Wake word detecta "Frank".
+1. Wake word detecta "YBY".
 2. Whisper.cpp transcreve.
 3. FastAPI envia para roteador local/cloud.
 4. Kokoro responde em audio.
@@ -81,15 +81,15 @@ Regra critica:
 | AsyncMQTT_ESP32 | Conexao MQTT sem travar o loop principal. |
 
 Topicos MQTT sugeridos:
-- `frank/esp32/status`
-- `frank/esp32/sensors`
-- `frank/mobile/command`
-- `frank/pc/telemetry`
-- `frank/agents/events`
+- `yby/esp32/status`
+- `yby/esp32/sensors`
+- `yby/mobile/command`
+- `yby/pc/telemetry`
+- `yby/agents/events`
 
 ## Contrato de Fallback
 
-O FRANK ZERO deve sempre escolher a rota mais barata e soberana:
+O YBY deve sempre escolher a rota mais barata e soberana:
 
 1. Local EXL2/ExLlamaV2 se VRAM permitir.
 2. Ollama local se modelo estiver disponivel.

@@ -1,4 +1,4 @@
-"""Servidor FastAPI industrial para o exocortex FRANK.
+"""Servidor FastAPI industrial para o exocortex YBY.
 
 Function Over Form: chat local via Ollama, telemetria real e protecao termica
 sem bloquear o event loop principal.
@@ -26,7 +26,7 @@ MIN_VRAM_MB = 500
 THERMAL_LIMIT_C = 80.0
 
 logger.add(
-    "frank_errors.log",
+    "yby_errors.log",
     level="ERROR",
     rotation="1 MB",
     retention=3,
@@ -37,7 +37,7 @@ logger.add(
 nexus_router = NexusRouter()
 
 app = FastAPI(
-    title="FRANK Exocortex API",
+    title="YBY Exocortex API",
     version="2.0.0",
     description="Backend local assíncrono para Ollama, telemetria e bunker health check.",
 )
@@ -263,7 +263,7 @@ def cloud_fallback_hint() -> str:
 
 @app.get("/health")
 async def health() -> dict[str, str]:
-    return {"status": "ok", "system": "FRANK_EXOCORTEX"}
+    return {"status": "ok", "system": "YBY_EXOCORTEX"}
 
 
 @app.post("/chat", response_model=ChatResponse)
